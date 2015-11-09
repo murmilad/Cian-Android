@@ -136,7 +136,7 @@ public class DownloaderService extends Service {
 				                	}
 				                	second++;
 
-				                	if (second % 30 == 0) {
+				                	if (((Integer)0).equals(((int)second % 30))) {
 				                		new SendRequestTask().execute(false, new Handler(){
 	
 											public void handle(String response) {
