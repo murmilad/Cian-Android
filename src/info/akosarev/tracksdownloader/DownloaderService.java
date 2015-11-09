@@ -25,6 +25,9 @@ public class DownloaderService extends Service {
     private boolean isRunning  = false;
     private HashMap<Integer, Boolean> runningTasks = new HashMap<Integer, Boolean>() ;
    
+  	private NotificationManager notificationManager;
+
+    
     @Override
     public void onCreate() {
         Log.i(TAG, "Service onCreate");
@@ -39,6 +42,8 @@ public class DownloaderService extends Service {
     	Log.i(TAG, "Service onStartCommand " + startId);
 
     	runningTasks.put(startId, true);
+    	notificationManager =
+          	  (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     	
         String sharedText = intent.getStringExtra("uri");
 
@@ -96,7 +101,6 @@ public class DownloaderService extends Service {
             postDataParams.put("token", "2");
             new SendRequestTask().execute(true, new Handler(){
 
-				@Override
 				public void handle(String response) {
 
 		            Log.i("SendRequestTask", "Link: response " + response);
@@ -110,9 +114,8 @@ public class DownloaderService extends Service {
 		            	
 
 		            	new Thread(new Runnable() {
-			                  @Override
 			                  public void run() {
-			                  	Integer minutes = 0;
+			                  	Integer second = 0;
 
 			                  	final Builder notificationProgressBuilder  = new Notification.Builder(DownloaderService.this)
 			                  	  .setCategory(Notification.CATEGORY_PROGRESS)
@@ -121,80 +124,78 @@ public class DownloaderService extends Service {
 		                      	  .setSmallIcon(R.drawable.ic_notification)
 		                      	  .setProgress(100, 0, false);
 
-		                      	final NotificationManager notificationManager =
-		                      	  (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		                      	notificationManager.notify(startId+100, notificationProgressBuilder.build());
-				                  	
-			                	while (runningTasks.containsKey(startId) && minutes < 60*10) {
+				                  
+			                	while (runningTasks.containsKey(startId) && second < 60*60*10) {
 				
-			                		Log.i("SendRequestTask", "Wait: " + minutes + " service: " + startId);
+			                		Log.i("SendRequestTask", "Wait: " + second + " service: " + startId);
 				                	try {
-				                	    Thread.sleep(1000*60);
+				                	    Thread.sleep(1000);
 				                	} catch(InterruptedException ex) {
 				                	    Thread.currentThread().interrupt();
 				                	}
-			                		minutes++;
+				                	second++;
 
-			                		new SendRequestTask().execute(false, new Handler(){
-
-										@Override
-										public void handle(String response) {
-					                    	if (runningTasks.containsKey(startId)) {
-							                    Pattern progressPattern = Pattern.compile("value:\\s*(\\d+)");
-							                    Matcher progressMatcher = progressPattern.matcher(response);
-							                    if (progressMatcher.find()){
-							                    	Integer progress = Integer.parseInt(progressMatcher.group(1));
-							                		Log.i("SendRequestTask", "Prigress " + progress);
-							                    	notificationProgressBuilder.setProgress(100, progress, false);
-							                    	notificationManager.notify(startId+100, notificationProgressBuilder.build());
-							                    }
-							                    
-
-					                    		Pattern downloadPattern = Pattern.compile("All=\\s*<a\\s+href\\s*=\\s*'([^']+)'\\s*>\\s*Download");
-							                    Matcher downloadMatcher = downloadPattern.matcher(response);
-								
-							                    if (downloadMatcher.find()){
-								                    	String downloadLink = downloadMatcher.group(1);
-							                   			Log.i("SendRequestTask", "Download link " + downloadLink);
-
-								                    	notificationProgressBuilder.setProgress(0, 0, false);
+				                	if (second % 30 == 0) {
+				                		new SendRequestTask().execute(false, new Handler(){
+	
+											public void handle(String response) {
+						                    	if (runningTasks.containsKey(startId)) {
+								                    Pattern progressPattern = Pattern.compile("value:\\s*(\\d+)");
+								                    Matcher progressMatcher = progressPattern.matcher(response);
+								                    if (progressMatcher.find()){
+								                    	Integer progress = Integer.parseInt(progressMatcher.group(1));
+								                		Log.i("SendRequestTask", "Prigress " + progress);
+								                    	notificationProgressBuilder.setProgress(100, progress, false);
 								                    	notificationManager.notify(startId+100, notificationProgressBuilder.build());
-								                    	notificationManager.cancel(startId+100); 
-
-
-								                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-								                    	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"http://akosarev.info/" + downloadLink + "\">" + headerText + "</a>");
-								                    	shareIntent.setType("text/html");
-								                    	PendingIntent sharePendingIntent = PendingIntent.getActivity(getApplicationContext(),
-								                    	    0, Intent.createChooser(shareIntent, getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
-								                    	
-								                    	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://akosarev.info/" + downloadLink));
-							                   	    	PendingIntent uriPendingIntent =
-							                   	    	        PendingIntent.getActivity(DownloaderService.this, 0, uriIntent, 0);
-		
-							                   			Notification notification  = new Notification.Builder(DownloaderService.this)
-								                      	  .setCategory(Notification.CATEGORY_MESSAGE)
-								                      	  .setContentTitle(headerText)
-								                      	  .setContentText("http://akosarev.info/" + downloadLink)
-								                      	  .setSmallIcon(R.drawable.ic_notification)
-								                      	  .addAction(R.drawable.ic_download, getString(R.string.download), uriPendingIntent)
-								                      	  .addAction(R.drawable.ic_share, getString(R.string.share), sharePendingIntent)
-								                      	  .build();
-		
-								                      	notificationManager.notify(startId, notification );
-										                    	
-							                   			Log.i("SendRequestTask", "Stop " + startId + " Running " + runningTasks.size());
-
-							                   			runningTasks.remove(startId);
-							                   			if (runningTasks.size() == 0) {
-							                   				stopSelf();
-							                   			}
-							                    }
-					                    	}
-										}
-			                			
-			                		}, "http://akosarev.info/" + ajaxUri);
-				
+								                    }
+								                    
+	
+						                    		Pattern downloadPattern = Pattern.compile("All=\\s*<a\\s+href\\s*=\\s*'([^']+)'\\s*>\\s*Download");
+								                    Matcher downloadMatcher = downloadPattern.matcher(response);
+									
+								                    if (downloadMatcher.find()){
+									                    	String downloadLink = downloadMatcher.group(1);
+								                   			Log.i("SendRequestTask", "Download link " + downloadLink);
+	
+									                    	notificationProgressBuilder.setProgress(0, 0, false);
+									                    	notificationManager.notify(startId+100, notificationProgressBuilder.build());
+									                    	notificationManager.cancel(startId+100); 
+	
+	
+									                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+									                    	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"http://akosarev.info/" + downloadLink + "\">" + headerText + "</a>");
+									                    	shareIntent.setType("text/html");
+									                    	PendingIntent sharePendingIntent = PendingIntent.getActivity(getApplicationContext(),
+									                    	    0, Intent.createChooser(shareIntent, getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
+									                    	
+									                    	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://akosarev.info/" + downloadLink));
+								                   	    	PendingIntent uriPendingIntent =
+								                   	    	        PendingIntent.getActivity(DownloaderService.this, 0, uriIntent, 0);
+			
+								                   			Notification notification  = new Notification.Builder(DownloaderService.this)
+									                      	  .setCategory(Notification.CATEGORY_MESSAGE)
+									                      	  .setContentTitle(headerText)
+									                      	  .setContentText("http://akosarev.info/" + downloadLink)
+									                      	  .setSmallIcon(R.drawable.ic_notification)
+									                      	  .addAction(R.drawable.ic_download, getString(R.string.download), uriPendingIntent)
+									                      	  .addAction(R.drawable.ic_share, getString(R.string.share), sharePendingIntent)
+									                      	  .build();
+			
+									                      	notificationManager.notify(startId, notification );
+											                    	
+								                   			Log.i("SendRequestTask", "Stop " + startId + " Running " + runningTasks.size());
+	
+								                   			runningTasks.remove(startId);
+								                   			if (runningTasks.size() == 0) {
+								                   				stopSelf();
+								                   			}
+								                    }
+						                    	}
+											}
+				                			
+				                		}, "http://akosarev.info/" + ajaxUri);
+				                	 }
 				                  }
 			                  }
 			               }).start();

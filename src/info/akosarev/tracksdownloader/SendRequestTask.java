@@ -64,8 +64,8 @@ public class SendRequestTask extends AsyncTask<Object, Integer, Long> {
             url = new URL(requestURL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(60000);
+            conn.setConnectTimeout(60000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -109,8 +109,8 @@ public class SendRequestTask extends AsyncTask<Object, Integer, Long> {
             url = new URL(requestURL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(25000);
+            conn.setConnectTimeout(25000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
