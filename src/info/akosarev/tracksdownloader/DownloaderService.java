@@ -25,9 +25,6 @@ public class DownloaderService extends Service {
     private boolean isRunning  = false;
     private HashMap<Integer, Boolean> runningTasks = new HashMap<Integer, Boolean>() ;
    
-  	private NotificationManager notificationManager;
-
-    
     @Override
     public void onCreate() {
         Log.i(TAG, "Service onCreate");
@@ -42,8 +39,7 @@ public class DownloaderService extends Service {
     	Log.i(TAG, "Service onStartCommand " + startId);
 
     	runningTasks.put(startId, true);
-    	notificationManager =
-          	  (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    	
     	
         String sharedText = intent.getStringExtra("uri");
 
@@ -124,6 +120,8 @@ public class DownloaderService extends Service {
 		                      	  .setSmallIcon(R.drawable.ic_notification)
 		                      	  .setProgress(100, 0, false);
 
+			                  	final NotificationManager notificationManager =
+			                        	  (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		                      	notificationManager.notify(startId+100, notificationProgressBuilder.build());
 				                  
 			                	while (runningTasks.containsKey(startId) && second < 60*60*10) {
