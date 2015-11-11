@@ -2,7 +2,6 @@ package info.akosarev.tracksdownloader;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -10,49 +9,27 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.net.ssl.HttpsURLConnection;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
-import com.google.android.gcm.server.InvalidRequestException;
-import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Result;
-import com.google.android.gcm.server.Sender;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class SendRequestTask extends AsyncTask<Object, Integer, Long> {
+public class SendRequestTask extends AsyncTask<Object, Integer, String> {
+
 
 	@Override
-	protected Long doInBackground(Object...  objects) {
-		String response;
+	protected String doInBackground(Object...  objects) {
+		String response = "";
 		if ((Boolean) objects[0]) {
-			response = performPostCall((String)objects[2], (HashMap<String, String>) objects[3]);
+			response = performPostCall((String)objects[1], (HashMap<String, String>) objects[2]);
 		} else {
-			response = performGetCall((String)objects[2]);
+			response = performGetCall((String)objects[1]);
 		}
-		((Handler)objects[1]).handle(response);
-
-		return null;
+		
+		return response;
 	}
 
 	public String  performPostCall(String requestURL,
@@ -87,10 +64,8 @@ public class SendRequestTask extends AsyncTask<Object, Integer, Long> {
                 while ((line=br.readLine()) != null) {
                     response+=line;
                 }
-            }
-            else {
-                response="";    
-
+            } else {
+            	Log.e("Downloader", "HTTP NOK: ");    
             }
         } catch (Exception e) {
             e.printStackTrace();
