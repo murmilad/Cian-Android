@@ -1,5 +1,7 @@
 package info.akosarev.tracksdownloader;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,11 +11,13 @@ import android.app.PendingIntent;
 import android.app.Notification.Builder;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class LookDownloadTask extends AsyncTask<Object, Integer, Void> {
+public class LookDownloadTask implements Runnable {
 
 	private Builder notificationProgressBuilder;
 	private NotificationManager notificationManager;
@@ -24,51 +28,38 @@ public class LookDownloadTask extends AsyncTask<Object, Integer, Void> {
     private Integer serviceId;
     private Integer taskId;
 
-	@Override
-	protected void onPreExecute() {
-		// TODO Auto-generated method stub
-		super.onPreExecute();
+    private String albumName;
+    private String url;
+
+    static SharedPreferences settings;
+	static SharedPreferences.Editor editor;
+
+    private Set<String> taskIdSet = new HashSet<String>();
+
+	LookDownloadTask(Service downloaderService, String albumName, String url, Integer serviceId, Integer taskId) {
 		
 		second = 0;
-		done = false;
-	}
 
-	@Override
-	protected void onProgressUpdate(Integer... values) {
-		// TODO Auto-generated method stub
-		super.onProgressUpdate(values);
-
-		Integer progress = values[0];
-    	Log.i("LookDownloadTask", "Progress " + progress + " task " + taskId);
-    	notificationProgressBuilder.setProgress(100, progress, false);
-    	notificationManager.notify(taskId, notificationProgressBuilder.build());
-    	
-	}
-	
-	@Override
-	protected void onPostExecute(Void result) {
-		// TODO Auto-generated method stub
-		super.onPostExecute(result);
+		this.downloaderService = downloaderService;
+		this.albumName         = albumName;
+		this.url               = url;
+		this.serviceId         = serviceId;
+		this.taskId            = taskId;
 		
-		downloaderService.stopSelf(serviceId);
+        settings = PreferenceManager.getDefaultSharedPreferences(downloaderService);
+        editor = settings.edit();
+		
+        taskIdSet = settings.getStringSet("taskId", taskIdSet);
+
 	}
 
-	@Override
-	protected Void doInBackground(Object...  objects) {
-
-		downloaderService = (Service) objects[0];
-		serviceId         = (Integer) objects[3];
-		taskId            = (Integer) objects[4];
-
-		String  albumName         = (String) objects[1];
-		String  url               = (String) objects[2];
-
+	public void run() {
 		Log.i("LookDownloadTask", "Background " + taskId);
 
 		notificationProgressBuilder  = new Notification.Builder(downloaderService)
     	  .setCategory(Notification.CATEGORY_PROGRESS)
     	  .setContentTitle(albumName)
-    	  .setContentText("Download in progress")
+    	  .setContentText(albumName + " Download in progress")
     	  .setSmallIcon(R.drawable.ic_notification);
 
     	notificationManager =
@@ -78,14 +69,7 @@ public class LookDownloadTask extends AsyncTask<Object, Integer, Void> {
     	
     	Integer progress = 0;
 
-    	while (!done && second < 60*60*10) {
-
-        	try {
-        	    Thread.sleep(1000);
-        	} catch(InterruptedException ex) {
-        	    Thread.currentThread().interrupt();
-        	}
-        	second++;
+    	while (second < 60*60*10) {
 
         	if (((Integer)0).equals(((int)second % 30))) {
 
@@ -100,7 +84,12 @@ public class LookDownloadTask extends AsyncTask<Object, Integer, Void> {
                 if (progressMatcher.find()){
                 	progress = Integer.parseInt(progressMatcher.group(1));
             		Log.i("LookDownloadTask", "Progress " + progress);
-            		publishProgress(progress);
+
+            		
+                	Log.i("LookDownloadTask", "Progress " + progress + " task " + taskId);
+                	notificationProgressBuilder.setProgress(100, progress, false);
+                	notificationManager.notify(taskId, notificationProgressBuilder.build());
+
                 } else {
                 
 	                Pattern downloadPattern = Pattern.compile("All=\\s*<a\\s+href\\s*=\\s*'([^']+)'\\s*>\\s*Download");
@@ -136,13 +125,28 @@ public class LookDownloadTask extends AsyncTask<Object, Integer, Void> {
 	                  	  .build();
 	
 	                  	notificationManager.notify("done", taskId, notification);
-	                  	done = true;
-	            	}
+	                  	
+
+	                  	taskIdSet.remove(taskId.toString());
+
+	                  	editor.putStringSet("taskId", taskIdSet);
+						editor.remove("ajaxUri" + taskId.toString());
+						editor.remove("headerText" + taskId.toString());
+						editor.commit();
+
+	                }
                 }
         		Log.i("LookDownloadTask", "Tick " + second + " Task " + taskId);
         	}
-        }
+        	
+        	try {
+        	    Thread.sleep(1000);
+        	} catch(InterruptedException ex) {
+        	    Thread.currentThread().interrupt();
+        	}
+        	second++;
 
-		return null;
-     }
+        }
+		
+	}
 }
