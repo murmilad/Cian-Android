@@ -39,6 +39,7 @@ public class LookDownloadTask implements Runnable {
 	LookDownloadTask(Service downloaderService, String albumName, String url, Integer serviceId, Integer taskId) {
 		
 		second = 0;
+		done = false;
 
 		this.downloaderService = downloaderService;
 		this.albumName         = albumName;
@@ -69,7 +70,7 @@ public class LookDownloadTask implements Runnable {
     	
     	Integer progress = 0;
 
-    	while (second < 60*60*10) {
+    	while (!done && second < 60*60*10) {
 
         	if (((Integer)0).equals(((int)second % 30))) {
 
@@ -133,6 +134,7 @@ public class LookDownloadTask implements Runnable {
 						editor.remove("ajaxUri" + taskId.toString());
 						editor.remove("headerText" + taskId.toString());
 						editor.commit();
+						done = true;
 
 	                }
                 }
