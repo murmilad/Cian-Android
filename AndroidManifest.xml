@@ -15,21 +15,26 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:enabled="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".DownloaderActivity"
-            android:label="@string/app_name" >
+            android:name="info.akosarev.cianrobot.CianActivity"
+            android:label="@string/app_name" 
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            >
 		    <intent-filter>
-		        <action android:name="android.intent.action.SEND" />
+		        <action android:name="android.intent.action.BOOT_COMPLETED" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		        <data android:mimeType="text/plain" />
 		    </intent-filter>
         </activity>
 
         <service
-            android:name=".DownloaderService"
+            android:name="info.akosarev.cianrobot.CianService"
             android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
         >
+		    
         </service>
      </application>
 

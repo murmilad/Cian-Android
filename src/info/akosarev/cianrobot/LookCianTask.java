@@ -1,4 +1,6 @@
-package info.akosarev.tracksdownloader;
+package info.akosarev.cianrobot;
+
+import info.akosarev.tracksdownloader.R;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +19,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class LookDownloadTask implements Runnable {
+public class LookCianTask implements Runnable {
 
 	private Builder notificationProgressBuilder;
 	private NotificationManager notificationManager;
@@ -36,7 +38,7 @@ public class LookDownloadTask implements Runnable {
 
     private Set<String> taskIdSet = new HashSet<String>();
 
-	LookDownloadTask(Service downloaderService, String albumName, String url, Integer serviceId, Integer taskId) {
+	LookCianTask(Service downloaderService, String albumName, String url, Integer serviceId, Integer taskId) {
 		
 		second = 0;
 		done = false;
@@ -55,7 +57,7 @@ public class LookDownloadTask implements Runnable {
 	}
 
 	public void run() {
-		Log.i("LookDownloadTask", "Background " + taskId);
+		Log.i("LookCianTask", "Background " + taskId);
 
 		notificationProgressBuilder  = new Notification.Builder(downloaderService)
     	  .setCategory(Notification.CATEGORY_PROGRESS)
@@ -74,20 +76,20 @@ public class LookDownloadTask implements Runnable {
 
         	if (((Integer)0).equals(((int)second % 30))) {
 
-        		Log.i("LookDownloadTask", "Check " + second + " Task " + taskId);
+        		Log.i("LookCianTask", "Check " + second + " Task " + taskId);
 
     			String response = new SendRequestTask().doInBackground(false, "http://akosarev.info/" + url);
 
-        		Log.i("LookDownloadTask", "Response " + response);
+        		Log.i("LookCianTask", "Response " + response);
 
                 Pattern progressPattern = Pattern.compile("value:\\s*(\\d+)");
                 Matcher progressMatcher = progressPattern.matcher(response);
                 if (progressMatcher.find()){
                 	progress = Integer.parseInt(progressMatcher.group(1));
-            		Log.i("LookDownloadTask", "Progress " + progress);
+            		Log.i("LookCianTask", "Progress " + progress);
 
             		
-                	Log.i("LookDownloadTask", "Progress " + progress + " task " + taskId);
+                	Log.i("LookCianTask", "Progress " + progress + " task " + taskId);
                 	notificationProgressBuilder.setProgress(100, progress, false);
                 	notificationManager.notify(taskId, notificationProgressBuilder.build());
 
@@ -99,7 +101,7 @@ public class LookDownloadTask implements Runnable {
 	                if (downloadMatcher.find()){
 	                
 	                	String downloadLink = downloadMatcher.group(1);
-	           			Log.i("LookDownloadTask", "Download link " + downloadLink);
+	           			Log.i("LookCianTask", "Download link " + downloadLink);
 	
 	                	notificationProgressBuilder.setProgress(0, 0, false);
 	                	notificationManager.notify(taskId, notificationProgressBuilder.build());
@@ -138,7 +140,7 @@ public class LookDownloadTask implements Runnable {
 
 	                }
                 }
-        		Log.i("LookDownloadTask", "Tick " + second + " Task " + taskId);
+        		Log.i("LookCianTask", "Tick " + second + " Task " + taskId);
         	}
         	
         	try {

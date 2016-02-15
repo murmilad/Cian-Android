@@ -1,4 +1,4 @@
-package info.akosarev.tracksdownloader;
+package info.akosarev.cianrobot;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

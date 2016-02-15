@@ -1,4 +1,4 @@
-package info.akosarev.tracksdownloader;
+package info.akosarev.cianrobot;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,12 +21,12 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class DownloaderService extends Service {
+public class CianService extends Service {
 
 
 	int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 	
-    private static final String TAG = "DownloaderService";
+    private static final String TAG = "CianService";
 
 	static SharedPreferences settings;
 	static SharedPreferences.Editor editor;
@@ -57,7 +57,7 @@ public class DownloaderService extends Service {
         
         for (String taskId : taskIdSet) {
         	Log.i(TAG, "Service onCreate tid " + taskId);
-        	executor.execute(new LookDownloadTask(DownloaderService.this, settings.getString("headerText" + taskId, ""), settings.getString("ajaxUri" + taskId, ""), 1, Integer.parseInt(taskId)));
+        	executor.execute(new LookCianTask(CianService.this, settings.getString("headerText" + taskId, ""), settings.getString("ajaxUri" + taskId, ""), 1, Integer.parseInt(taskId)));
         }
         isRunning = true;
     }
@@ -126,7 +126,7 @@ public class DownloaderService extends Service {
 						editor.putString("headerText" + taskId.toString(), headerText);
 						editor.commit();
 
-						executor.execute(new LookDownloadTask(DownloaderService.this, headerText, ajaxUri, startId, taskId));
+						executor.execute(new LookCianTask(CianService.this, headerText, ajaxUri, startId, taskId));
 				    	
 				    }
 			    	

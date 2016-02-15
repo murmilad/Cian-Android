@@ -1,12 +1,13 @@
-package info.akosarev.tracksdownloader;
+package info.akosarev.cianrobot;
 
 
+import info.akosarev.tracksdownloader.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class DownloaderActivity extends Activity {
+public class CianActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +20,7 @@ public class DownloaderActivity extends Activity {
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-            	Intent serviceIntent = new Intent(this, DownloaderService.class);
+            	Intent serviceIntent = new Intent(this, CianService.class);
             	if (intent.getStringExtra(Intent.EXTRA_TEXT) != null) {
             		serviceIntent.putExtra("uri", intent.getStringExtra(Intent.EXTRA_TEXT));
 
