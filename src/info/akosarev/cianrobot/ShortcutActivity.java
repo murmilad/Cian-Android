@@ -20,7 +20,7 @@ public class ShortcutActivity extends Activity {
         // The result we are passing back from this activity
         Intent intent = new Intent();
         intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Shortcut Test");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Cian robot");
         intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
         setResult(RESULT_OK, intent);
 

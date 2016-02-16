@@ -2,10 +2,16 @@ package info.akosarev.cianrobot;
 
 import info.akosarev.cianrobot.R;
 
+import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,140 +23,150 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 
 public class LookCianTask implements Runnable {
 
 	private Builder notificationProgressBuilder;
 	private NotificationManager notificationManager;
-	private Integer second;
 	private Boolean done;
 
     private Service downloaderService;
-    private Integer serviceId;
-    private Integer taskId;
-
-    private String albumName;
     private String url;
+    private Calendar c;
 
     static SharedPreferences settings;
 	static SharedPreferences.Editor editor;
 
     private Set<String> taskIdSet = new HashSet<String>();
 
-	LookCianTask(Service downloaderService, String albumName, String url, Integer serviceId, Integer taskId) {
+	LookCianTask(Service downloaderService, String url) {
 		
-		second = 0;
 		done = false;
 
 		this.downloaderService = downloaderService;
-		this.albumName         = albumName;
 		this.url               = url;
-		this.serviceId         = serviceId;
-		this.taskId            = taskId;
+
+		c = Calendar.getInstance(); 
+
+		notificationProgressBuilder  = new Notification.Builder(downloaderService)
+		.setCategory(Notification.CATEGORY_MESSAGE)
+		.setContentTitle("Cian service")
+		.setContentText("Started " +  c.getTime())
+		.setSmallIcon(R.drawable.ic_notification)
+		.setPriority(Notification.PRIORITY_MIN)
+		;
 		
-        settings = PreferenceManager.getDefaultSharedPreferences(downloaderService);
-        editor = settings.edit();
-		
+
+		settings = PreferenceManager.getDefaultSharedPreferences(downloaderService);
+        editor   = settings.edit();
+
         taskIdSet = settings.getStringSet("taskId", taskIdSet);
 
 	}
 
 	public void run() {
-		Log.i("LookCianTask", "Background " + taskId);
+		Integer seconds = 0;
+		notificationManager =
+	          	  (NotificationManager) downloaderService.getSystemService(downloaderService.NOTIFICATION_SERVICE);
 
-		notificationProgressBuilder  = new Notification.Builder(downloaderService)
-    	  .setCategory(Notification.CATEGORY_PROGRESS)
-    	  .setContentTitle(albumName)
-    	  .setContentText(albumName + " Download in progress")
-    	  .setSmallIcon(R.drawable.ic_notification);
 
-    	notificationManager =
-          	  (NotificationManager) downloaderService.getSystemService(downloaderService.NOTIFICATION_SERVICE);
 
-    	notificationManager.notify(taskId, notificationProgressBuilder.build());
-    	
-    	Integer progress = 0;
-
-    	while (!done && second < 60*60*10) {
-
-        	if (((Integer)0).equals(((int)second % 30))) {
-
-        		Log.i("LookCianTask", "Check " + second + " Task " + taskId);
-
-    			String response = new SendRequestTask().doInBackground(false, "http://akosarev.info/" + url);
-
-        		Log.i("LookCianTask", "Response " + response);
-
-                Pattern progressPattern = Pattern.compile("value:\\s*(\\d+)");
-                Matcher progressMatcher = progressPattern.matcher(response);
-                if (progressMatcher.find()){
-                	progress = Integer.parseInt(progressMatcher.group(1));
-            		Log.i("LookCianTask", "Progress " + progress);
-
-            		
-                	Log.i("LookCianTask", "Progress " + progress + " task " + taskId);
-                	notificationProgressBuilder.setProgress(100, progress, false);
-                	notificationManager.notify(taskId, notificationProgressBuilder.build());
-
-                } else {
-                
-	                Pattern downloadPattern = Pattern.compile("All=\\s*<a\\s+href\\s*=\\s*'([^']+)'\\s*>\\s*Download");
-	                Matcher downloadMatcher = downloadPattern.matcher(response);
 		
-	                if (downloadMatcher.find()){
-	                
-	                	String downloadLink = downloadMatcher.group(1);
-	           			Log.i("LookCianTask", "Download link " + downloadLink);
-	
-	                	notificationProgressBuilder.setProgress(0, 0, false);
-	                	notificationManager.notify(taskId, notificationProgressBuilder.build());
-	                	notificationManager.cancel(taskId); 
-	
-	
-	                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-	                	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"http://akosarev.info/" + downloadLink + "\">" + albumName + "</a>");
-	                	shareIntent.setType("text/html");
-	                	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
-	                			taskId, Intent.createChooser(shareIntent, downloaderService.getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
-	                	
-	                	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://akosarev.info/" + downloadLink));
-	           	    	PendingIntent uriPendingIntent =
-	           	    	        PendingIntent.getActivity(downloaderService, taskId, uriIntent, 0);
-	
-	           			Notification notification  = new Notification.Builder(downloaderService)
-	                  	  .setCategory(Notification.CATEGORY_MESSAGE)
-	                  	  .setContentTitle(albumName)
-	                  	  .setContentText("http://akosarev.info/" + downloadLink)
-	                  	  .setSmallIcon(R.drawable.ic_notification)
-	                  	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
-	                  	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
-	                  	  .build();
-	
-	                  	notificationManager.notify("done", taskId, notification);
-	                  	
+    	while (true) {
+    		c = Calendar.getInstance(); 
 
-	                  	taskIdSet.remove(taskId.toString());
+    		notificationProgressBuilder.setContentText("Started " +  c.getTime());
 
-	                  	editor.putStringSet("taskId", taskIdSet);
-						editor.remove("ajaxUri" + taskId.toString());
-						editor.remove("headerText" + taskId.toString());
-						editor.commit();
-						done = true;
+    		Notification notification = notificationProgressBuilder.build();
+    		notification.flags |= Notification.FLAG_NO_CLEAR;
+    		notificationManager.notify(1, notification);
 
-	                }
-                }
-        		Log.i("LookCianTask", "Tick " + second + " Task " + taskId);
-        	}
-        	
-        	try {
+    		if (((Integer)0).equals(((int)seconds % 60))) {
+			    Log.i("CianTask", "JSON: uri " + url);
+		
+		        String response = new SendRequestTask().doInBackground(false, url);
+		    	
+			    Log.i("CianTask", "JSON: response " + response);
+		
+			    try {
+				    JSONObject flatsObject = new JSONObject(response);
+		
+				    String responseStatus = flatsObject.getString("status");
+		
+				    Log.i("CianTask", "JSON: status" + responseStatus);
+		
+				    flatsObject.getJSONObject("data").getJSONObject("points").keys();
+				    for (Iterator<String> pointIterator = flatsObject.getJSONObject("data").getJSONObject("points").keys(); pointIterator.hasNext();) {
+				    	String pointPosition = pointIterator.next();
+				    	
+				    	JSONObject pointObject = flatsObject.getJSONObject("data").getJSONObject("points").getJSONObject(pointPosition);
+			
+				    	JSONArray flatObjects = pointObject.getJSONArray("offers");
+				    	String flatAddress = pointObject.getJSONObject("content").getString("text");
+		
+				    	for (Integer i = 0; i < flatObjects.length(); i++) {
+		
+					    	JSONObject flatObject = (JSONObject) flatObjects.get(i);
+					    			
+					    	String flatId = flatObject.getString("id");
+		
+					    	if (!taskIdSet.contains(flatId)){
+					    		JSONArray flatData = flatObject.getJSONArray("link_text");
+					    		String flatType = flatData.getString(0);
+					    		String flatArea = flatData.getString(1);
+					    		String flatPrice = flatData.getString(2);
+					    		String flatFlat = flatData.getString(3);
+					    		String flatUrl  =  "http://www.cian.ru/sale/flat/" + flatId + "/";
+			
+		
+			                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+			                	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"" + flatUrl + "\">" + flatAddress + "</a>");
+			                	shareIntent.setType("text/html");
+			                	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
+			                			Integer.parseInt(flatId), Intent.createChooser(shareIntent, downloaderService.getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
+			                	
+			                	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(flatUrl));
+			           	    	PendingIntent uriPendingIntent =
+			           	    	        PendingIntent.getActivity(downloaderService, Integer.parseInt(flatId), uriIntent, 0);
+			
+			           			notification  = new Notification.Builder(downloaderService)
+			                  	  .setCategory(Notification.CATEGORY_MESSAGE)
+			                  	  .setContentTitle(Html.fromHtml(flatAddress + " " + flatType + " (" + flatArea + " | " + flatFlat +") " + flatPrice))
+			                  	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b>" + flatPrice + "</b>")))
+			                  	  .setSmallIcon(R.drawable.ic_notification)
+			                  	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
+			                  	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
+			                  	  .build();
+			
+			                  	notificationManager.notify("done", Integer.parseInt(flatId), notification);
+		
+								Log.i("CianTask", "JSON: address " + flatAddress +  " flat " + flatData.getString(0));
+		
+								editor.clear();
+								editor.commit();
+					    		taskIdSet.add(flatId);
+								editor.putStringSet("taskId", taskIdSet);
+								
+								
+								Log.i("CianTask", "commit " + flatId +  " apply " + editor.commit());
+								
+			
+					    	}
+					    }
+				    }
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+    		}
+    		seconds++;
+		    try {
         	    Thread.sleep(1000);
         	} catch(InterruptedException ex) {
-        	    Thread.currentThread().interrupt();
+        		ex.printStackTrace();
         	}
-        	second++;
-
-        }
+    	}
 		
 	}
 }

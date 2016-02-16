@@ -43,7 +43,6 @@
         <service
             android:name="info.akosarev.cianrobot.CianService"
             android:enabled="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
         >
 		    
         </service>
