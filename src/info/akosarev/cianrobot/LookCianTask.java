@@ -53,7 +53,7 @@ public class LookCianTask implements Runnable {
 		notificationProgressBuilder  = new Notification.Builder(downloaderService)
 		.setCategory(Notification.CATEGORY_MESSAGE)
 		.setContentTitle("Cian service")
-		.setContentText("Started " +  c.getTime())
+		.setContentText("Started")
 		.setSmallIcon(R.drawable.ic_notification)
 		.setPriority(Notification.PRIORITY_MIN)
 		;
@@ -77,7 +77,7 @@ public class LookCianTask implements Runnable {
     	while (true) {
     		c = Calendar.getInstance(); 
 
-    		notificationProgressBuilder.setContentText("Started " +  c.getTime());
+    		notificationProgressBuilder.setContentTitle("Cian service " +  c.getTime());
 
     		Notification notification = notificationProgressBuilder.build();
     		notification.flags |= Notification.FLAG_NO_CLEAR;

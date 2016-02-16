@@ -77,7 +77,7 @@ public class CianService extends Service {
 
     	if (intent != null && intent.getStringExtra("uri") != null) {
 	        final String sharedText = intent.getStringExtra("uri");
-	
+		          	  
 	        executor.execute(new LookCianTask(this, sharedText));
 	        
         }

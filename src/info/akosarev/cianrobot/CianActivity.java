@@ -12,30 +12,13 @@ public class CianActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_downloader);
 
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-            	Intent serviceIntent = new Intent(this, CianService.class);
-            	if (intent.getStringExtra(Intent.EXTRA_TEXT) != null) {
-            		serviceIntent.putExtra("uri", intent.getStringExtra(Intent.EXTRA_TEXT));
+    	Intent serviceIntent = new Intent(this, CianService.class);
+		serviceIntent.putExtra("uri", "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=55.851651_37.546711,55.851651_37.713737,55.907522_37.713737,55.907522_37.546711&_=1455551798781");
+		startService(serviceIntent);
 
-            		startService(serviceIntent); // Handle text being sent
-            	} else {
-                	Toast.makeText(this, "Wrong url!", Toast.LENGTH_LONG).show();
-                }
-            } 
-        } else {
-        	Intent serviceIntent = new Intent(this, CianService.class);
-    		serviceIntent.putExtra("uri", "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=55.851651_37.546711,55.851651_37.713737,55.907522_37.713737,55.907522_37.546711&_=1455551798781");
-    		startService(serviceIntent);
-        }
-
-        this.finish();
+		this.finish();
     }
 
 }
