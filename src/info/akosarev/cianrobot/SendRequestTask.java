@@ -78,39 +78,29 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
 
 	public String  performGetCall(String requestURL) {
 
+        System.setProperty("http.agent", "");
+
         URL url;
         String response = "";
         try {
             url = new URL(requestURL);
-
+            
+            Log.i("CianTask", " requestURL " + url.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(25000);
-            conn.setConnectTimeout(25000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
+            conn.setRequestMethod("GET");
+            
+            conn.setReadTimeout(15*1000);
+            conn.connect();
 
 
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder stringBuilder = new StringBuilder();
 
-            writer.flush();
-            writer.close();
-            os.close();
-            int responseCode=conn.getResponseCode();
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    response+=line;
-                }
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+            	stringBuilder.append(line + "\n");
             }
-            else {
-                response="";    
-
-            }
+            response = stringBuilder.toString();
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Downloader", "HTTP error: " + e.toString());

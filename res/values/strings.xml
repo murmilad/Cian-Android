@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">8Tracks Downloader</string>
+    <string name="app_name">Cian Scanner</string>
     <string name="progress">Sending an album</string>
-    <string name="download">Download</string>
+    <string name="open">Open</string>
     <string name="share">Share</string>
 
 </resources>

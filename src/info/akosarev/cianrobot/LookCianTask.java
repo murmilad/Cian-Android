@@ -1,6 +1,6 @@
 package info.akosarev.cianrobot;
 
-import info.akosarev.tracksdownloader.R;
+import info.akosarev.cianrobot.R;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -123,7 +123,7 @@ public class LookCianTask implements Runnable {
 	                  	  .setContentTitle(albumName)
 	                  	  .setContentText("http://akosarev.info/" + downloadLink)
 	                  	  .setSmallIcon(R.drawable.ic_notification)
-	                  	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.download), uriPendingIntent)
+	                  	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
 	                  	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
 	                  	  .build();
 	
