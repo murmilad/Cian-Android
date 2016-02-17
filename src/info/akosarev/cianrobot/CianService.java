@@ -34,15 +34,12 @@ import android.util.Log;
 public class CianService extends Service {
 
 
-	int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-	
     private static final String TAG = "CianService";
 
 	static SharedPreferences settings;
 	static SharedPreferences.Editor editor;
 
     private boolean isRunning  = false;
-    private ThreadPoolExecutor executor;
     
 
     private Set<String> taskIdSet = new HashSet<String>();
@@ -53,16 +50,6 @@ public class CianService extends Service {
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         editor = settings.edit();
-
-        executor = new ThreadPoolExecutor(
-    		    NUMBER_OF_CORES*2,
-    		    NUMBER_OF_CORES*2,
-    		    60L,
-    		    TimeUnit.SECONDS,
-    		    new LinkedBlockingQueue<Runnable>()
-    	);
-
-        
         taskIdSet = settings.getStringSet("taskId", taskIdSet);
         
         isRunning = true;
@@ -77,8 +64,14 @@ public class CianService extends Service {
 
     	if (intent != null && intent.getStringExtra("uri") != null) {
 	        final String sharedText = intent.getStringExtra("uri");
-		          	  
-	        executor.execute(new LookCianTask(this, sharedText));
+
+	        final LookCianTask task = new LookCianTask(this, sharedText);
+	        
+	        new Thread() {
+	            public void run() {
+	            	task.run();
+	            }
+	        }.start();
 	        
         }
         return Service.START_STICKY;

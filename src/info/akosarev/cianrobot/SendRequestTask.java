@@ -19,7 +19,6 @@ import android.util.Log;
 
 public class SendRequestTask extends AsyncTask<Object, Integer, String> {
 
-
 	@Override
 	protected String doInBackground(Object...  objects) {
 		String response = "";
