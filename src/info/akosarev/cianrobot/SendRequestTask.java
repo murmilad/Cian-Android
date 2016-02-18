@@ -84,7 +84,7 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
         try {
             url = new URL(requestURL);
             
-            Log.i("CianTask", " requestURL " + url.toString());
+//            Log.i("CianTask", " requestURL " + url.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             
