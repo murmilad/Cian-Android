@@ -162,17 +162,6 @@ public class CianActivity extends Activity {
 //        <tessellate>1</tessellate>
 //        <altitudeMode>clampToGround</altitudeMode>
 //        <coordinates>
-//        37.402611,55.858743,0.0 
-//        </coordinates>
-//        </LineString>
-//        </Placemark>
-//        <Placemark><name>NAME</name>
-//        <description>YES</description>
-//        <styleUrl>#Path</styleUrl>
-//        <LineString>
-//        <tessellate>1</tessellate>
-//        <altitudeMode>clampToGround</altitudeMode>
-//        <coordinates>
 //        37.415314,55.871651,0.0 
 //        37.558479,55.778697,0.0 
 //        37.441063,55.877237,0.0 
@@ -259,24 +248,6 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <?xml version="1.0" encoding="UTF-8"?>
-//        <kml xmlns="http://www.opengis.net/kml/2.2">
-//        <Document><name>My document</name>
-//        <description>Content</description>
-//        <Style id="Lump">
-//        <LineStyle><color>CD0000FF</color><width>2</width></LineStyle>
-//        <PolyStyle><color>9AFF0000</color></PolyStyle>
-//        </Style>
-//        <Style id="Path">
-//        <LineStyle><color>FF0000FF</color><width>3</width></LineStyle>
-//        </Style>
-//        <Style id="markerstyle">
-//        <IconStyle><Icon><href>
-//        http://maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png
-//        </href></Icon></IconStyle>
-//        </Style>
-//        </Document>
-//        </kml>
 //        <Placemark><name>NAME</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
@@ -462,40 +433,6 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
-//        <description>YES</description>
-//        <styleUrl>#Path</styleUrl>
-//        <LineString>
-//        <tessellate>1</tessellate>
-//        <altitudeMode>clampToGround</altitudeMode>
-//        <coordinates>
-//        37.708855,55.740255,0.0 
-//        37.691345,55.738902,0.0 
-//        37.680359,55.759770,0.0 
-//        37.704735,55.763827,0.0 
-//        </coordinates>
-//        </LineString>
-//        </Placemark>
-//        </Document>
-//        </kml>
-
-        
-//        <?xml version="1.0" encoding="UTF-8"?>
-//        <kml xmlns="http://www.opengis.net/kml/2.2">
-//        <Document><name>My document</name>
-//        <description>Content</description>
-//        <Style id="Lump">
-//        <LineStyle><color>CD0000FF</color><width>2</width></LineStyle>
-//        <PolyStyle><color>9AFF0000</color></PolyStyle>
-//        </Style>
-//        <Style id="Path">
-//        <LineStyle><color>FF0000FF</color><width>3</width></LineStyle>
-//        </Style>
-//        <Style id="markerstyle">
-//        <IconStyle><Icon><href>
-//        http://maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png
-//        </href></Icon></IconStyle>
-//        </Style>
 //        <Placemark><name>NAME</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
