@@ -136,6 +136,9 @@ public class LookCianTask implements Runnable {
 				    JSONObject flatsObject = new JSONObject(response);
 				    Log.i("CianTask", "JSON: offers count " + flatsObject.getJSONObject("data").getInt("offers_count"));
 
+				    Integer equalCount = 0;
+				    Integer flatCount  = 0;
+				    Integer cianCount  = 0;
 				    for (String shape :shapes){
 					    try {
 
@@ -147,25 +150,45 @@ public class LookCianTask implements Runnable {
 						    JSONObject flatsCurrentObject = new JSONObject(response);
 
 						    Log.i("CianTask", "JSON: offers count " + flatsCurrentObject.getJSONObject("data").getInt("offers_count"));
+						    
 						    if (flatsCurrentObject.getJSONObject("data").getInt("offers_count") > 300) {
 						    	Log.i("CianTask", "JSON: offers "+shape+" count > 300!");
+						    	cianCount += 300;
+						    } else {
+						    	cianCount += flatsCurrentObject.getJSONObject("data").getInt("offers_count");
 						    }
 
 						    String responseStatus = flatsCurrentObject.getString("status");
 				
 						    Log.i("CianTask", "JSON: status" + responseStatus);
 				
-						    flatsCurrentObject.getJSONObject("data").getJSONObject("points").keys();
 						    for (Iterator<String> pointIterator = flatsCurrentObject.getJSONObject("data").getJSONObject("points").keys(); pointIterator.hasNext();) {
 						    	String pointPosition = pointIterator.next();
 						    	
 						    	JSONObject pointObject = flatsCurrentObject.getJSONObject("data").getJSONObject("points").getJSONObject(pointPosition);
+						    	flatCount++;
+
+//							    try {
+//
+//							    	if (flatsObject.getJSONObject("data").getJSONObject("points").getJSONObject(pointPosition)!= null){
+//							    		equalCount++;
+//							    	}
+//							    } catch (JSONException e) {
+//									e.printStackTrace();
+//								}
+							    
 						    	flatsObject.getJSONObject("data").getJSONObject("points").put(pointPosition, pointObject);
+						    	
 						    }
 					    } catch (JSONException e) {
 							e.printStackTrace();
 						}
 				    }
+				    
+				    Log.i("CianTask", "JSON: equal count " + equalCount);
+				    Log.i("CianTask", "JSON: flat count " + flatCount);
+				    Log.i("CianTask", "JSON: cian count " + cianCount);
+				    
 
 				    try {
 				    	Integer pointCount = 0;
