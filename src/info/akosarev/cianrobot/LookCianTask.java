@@ -126,7 +126,7 @@ public class LookCianTask implements Runnable {
 	    		notification.flags |= Notification.FLAG_NO_CLEAR;
 	    		notificationManager.notify(1, notification);
 	
-	    		if (((Integer)0).equals(((int)seconds % 60))) {
+	    		if (((Integer)0).equals(((int)seconds % 60*2))) {
 				    Log.i("CianTask", "JSON: uri " + url);
 			
 			        String response = new SendRequestTask().doInBackground(false, url);

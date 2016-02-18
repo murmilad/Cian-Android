@@ -42,7 +42,7 @@ public class CianActivity extends Activity {
 //        http://maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png
 //        </href></Icon></IconStyle>
 //        </Style>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME1</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -61,7 +61,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME2</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -79,7 +79,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME3</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -97,7 +97,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME4</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -113,7 +113,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME5</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -136,7 +136,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME6</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -155,7 +155,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME7</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -169,7 +169,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME8</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -187,7 +187,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME9</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -214,7 +214,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME10</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -233,7 +233,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME11</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -248,7 +248,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME12</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -267,7 +267,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME13</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -286,7 +286,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME14</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -302,7 +302,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME15</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -320,7 +320,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME16</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -342,7 +342,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME17</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -364,7 +364,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME18</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -387,7 +387,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME19</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -408,7 +408,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME20</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -433,7 +433,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME21</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -452,7 +452,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME22</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -471,7 +471,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME23</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
@@ -489,7 +489,7 @@ public class CianActivity extends Activity {
 //        </coordinates>
 //        </LineString>
 //        </Placemark>
-//        <Placemark><name>NAME</name>
+//        <Placemark><name>NAME24</name>
 //        <description>YES</description>
 //        <styleUrl>#Path</styleUrl>
 //        <LineString>
