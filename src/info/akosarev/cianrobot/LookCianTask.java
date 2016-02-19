@@ -111,20 +111,16 @@ public class LookCianTask implements Runnable {
 
 	}
 
+	
 	public void run() {
 		Integer seconds = 0;
 		notificationManager =
 	          	  (NotificationManager) downloaderService.getSystemService(downloaderService.NOTIFICATION_SERVICE);
 
-    	while (true) {
+		downloaderService.startForeground(2, notificationProgressBuilder.build());
+
+		while (true) {
     		try {
-	    		c = Calendar.getInstance(); 
-	
-	    		notificationProgressBuilder.setContentTitle("Cian service " +  c.getTime());
-	
-	    		Notification notification = notificationProgressBuilder.build();
-	    		notification.flags |= Notification.FLAG_NO_CLEAR;
-	    		notificationManager.notify(1, notification);
 	
 	    		if (((Integer)0).equals(((int)seconds % 60*2))) {
 				    Log.i("CianTask", "JSON: uri " + url);
@@ -193,7 +189,6 @@ public class LookCianTask implements Runnable {
 				    try {
 				    	Integer pointCount = 0;
 					    for (Iterator<String> pointIterator = flatsObject.getJSONObject("data").getJSONObject("points").keys(); pointIterator.hasNext();) {
-					    	pointCount++;
 					    	String pointPosition = pointIterator.next();
 					    	
 					    	JSONObject pointObject = flatsObject.getJSONObject("data").getJSONObject("points").getJSONObject(pointPosition);
@@ -211,7 +206,8 @@ public class LookCianTask implements Runnable {
 							    	JSONObject flatObject = (JSONObject) flatObjects.get(i);
 							    			
 							    	String flatId = flatObject.getString("id");
-				
+							    	pointCount++;
+
 							    	
 	
 							    	if (!taskIdSet.contains(flatId)){
@@ -238,7 +234,7 @@ public class LookCianTask implements Runnable {
 						           	    	PendingIntent uriPendingIntent =
 						           	    	        PendingIntent.getActivity(downloaderService, Integer.parseInt(flatId), uriIntent, 0);
 						
-						           			notification  = new Notification.Builder(downloaderService)
+						           			Notification notification  = new Notification.Builder(downloaderService)
 						                  	  .setCategory(Notification.CATEGORY_MESSAGE)
 						                  	  .setContentTitle(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") " + flatPrice))
 						                  	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b>" + flatPrice + "</b>")))
@@ -247,8 +243,11 @@ public class LookCianTask implements Runnable {
 						                  	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
 						                  	  .build();
 						
+						                  	
 						                  	notificationManager.notify("done", Integer.parseInt(flatId), notification);
-					
+						                  	//W/NotificationManager(30368): notify: id corrupted: sent 26874598, got back 0
+
+						                  	
 											Log.i("CianTask", "JSON: address " + flatAddress +  " flat " + flatData.getString(0));
 					
 											editor.clear();
@@ -272,7 +271,7 @@ public class LookCianTask implements Runnable {
 							    }
 					    	}
 					    }
-					    Log.i("CianTask", "point count " + pointCount);
+					    Log.i("CianTask", "operate count " + pointCount);
 					    
 					} catch (JSONException e) {
 						e.printStackTrace();

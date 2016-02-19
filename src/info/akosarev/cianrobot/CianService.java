@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.json.*;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,10 +32,13 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 
-public class CianService extends Service {
+public class CianService extends IntentService {
 
+    public CianService() {
+		super("cianService");
+	}
 
-    private static final String TAG = "CianService";
+	private static final String TAG = "CianService";
 
 	static SharedPreferences settings;
 	static SharedPreferences.Editor editor;
@@ -45,21 +49,9 @@ public class CianService extends Service {
     private Set<String> taskIdSet = new HashSet<String>();
    
     @Override
-    public void onCreate() {
-        Log.i(TAG, "Service onCreate");
+    public void onHandleIntent(final Intent intent) {
 
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-        editor = settings.edit();
-        taskIdSet = settings.getStringSet("taskId", taskIdSet);
-        
-        isRunning = true;
-    }
-
-    @Override
-    public int onStartCommand(final Intent intent, int flags, final int startId) {
-
-    	Log.i(TAG, "Service onStartCommand " + startId);
-	
+    	Log.i(TAG, "Service onStartCommand");
 	
 
     	if (intent != null && intent.getStringExtra("uri") != null) {
@@ -67,29 +59,9 @@ public class CianService extends Service {
 
 	        final LookCianTask task = new LookCianTask(this, sharedText);
 	        
-	        new Thread() {
-	            public void run() {
-	            	task.run();
-	            }
-	        }.start();
+	        task.run();
 	        
         }
-        return Service.START_STICKY;
-    }
-
-
-    @Override
-    public IBinder onBind(Intent arg0) {
-        Log.i(TAG, "Service onBind");
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-
-    	
-        isRunning = false;
-        Log.i(TAG, "Service onDestroy");
     }
 
 }
