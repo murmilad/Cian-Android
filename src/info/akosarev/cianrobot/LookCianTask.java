@@ -698,7 +698,7 @@ public class LookCianTask implements Runnable {
 ///		metro.add(new Coordinate((double) 37.607799, (double) 55.718821)); //Шаболовская
 //		metro.add(new Coordinate((double) 37.743723, (double) 55.620982)); //Шипиловская
 		metro.add(new Coordinate((double) 37.751583, (double) 55.758255)); //Шоссе Энтузиастов
-		metro.add(new Coordinate((double) 37.798556, (double) 55.810228)); //Щёлковская
+//		metro.add(new Coordinate((double) 37.798556, (double) 55.810228)); //Щёлковская
 		metro.add(new Coordinate((double) 37.463772, (double) 55.808827)); //Щукинская
 		metro.add(new Coordinate((double) 37.705284, (double) 55.782066)); //Электрозаводская
 		metro.add(new Coordinate((double) 37.482852, (double) 55.663146)); //Юго//Западная
