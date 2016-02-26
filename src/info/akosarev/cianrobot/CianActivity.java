@@ -581,7 +581,7 @@ public class CianActivity extends Activity {
         
         
 		Intent serviceIntent = new Intent(this, CianService.class);
-		serviceIntent.putExtra("uri", "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=55.842458_37.617702,55.857106_37.612896,55.860478_37.635384,55.857491_37.645168,55.847952_37.649460,55.841012_37.644997,55.842265_37.619419&_=1455551798781");
+		serviceIntent.putExtra("uri", "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=55.842458_37.617702,55.857106_37.612896,55.860478_37.635384,55.857491_37.645168,55.847952_37.649460,55.841012_37.644997,55.842265_37.619419&_=1455551798781");
 		startService(serviceIntent);
 
 		this.finish();

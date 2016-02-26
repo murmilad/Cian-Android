@@ -145,10 +145,10 @@ public class LookCianTask implements Runnable {
 
 		downloaderService.startForeground(2, notificationProgressBuilder.build());
 
-		String generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=";
+		String generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=";
 
 		if (this.maxprice != null) {
-			generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&maxprice=" + maxprice + "&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=";
+			generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=" + maxprice + "&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=";
 		}
 		
 		while (true) {
@@ -232,7 +232,7 @@ public class LookCianTask implements Runnable {
 					    	String flatAddress = pointObject.getJSONObject("content").getString("text");
 					    	String clossestStation = null;
 
-					    	if (flatObjects.length() < 50) { //�� �����������
+					    	if (flatObjects.length() < 50) { //Исключаем новостройки
 						    	for (Integer i = 0; i < flatObjects.length(); i++) {
 				
 							    	JSONObject flatObject = (JSONObject) flatObjects.get(i);
@@ -345,9 +345,9 @@ public class LookCianTask implements Runnable {
 //	55.898356, 37.582869
 //	
 //	0,004141 = 250
-//	0,000016564 = 1�
+//	0,000016564 = 1пїЅ
 	
-//	������ �����
+//	пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	private String getClossestStation(String position){
 		String positionUri  = position.replace(" ", ",");
 
@@ -732,11 +732,11 @@ public class LookCianTask implements Runnable {
 //https://static-maps.yandex.ru/1.x/?ll=37.6111,55.8911&z=17&l=map&size=200,200
 
 //02-17 18:14:24.737: I/CianTask(7766):  requestURL http://catalog.api.2gis.ru/geo/search?q=37.602815,55.882818&types=metro&format=short&limit=10&version=1.3&radius=250&key=rusazx2220
-//02-17 18:14:24.901: I/CianTask(7766): JSON: metro {"api_version":"1.3","response_code":"200","total":"1","result":[{"id":"4504385606388529","project_id":32,"type":"metro","name":"������, ��������","short_name":"��������","centroid":"POINT(37.602909 55.884036)","attributes":{"rank":1,"type":"land"},"dist":131}]}
+//02-17 18:14:24.901: I/CianTask(7766): JSON: metro {"api_version":"1.3","response_code":"200","total":"1","result":[{"id":"4504385606388529","project_id":32,"type":"metro","name":"пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ","short_name":"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ","centroid":"POINT(37.602909 55.884036)","attributes":{"rank":1,"type":"land"},"dist":131}]}
 //02-17 18:14:24.902: I/CianTask(7766): JSON: metro status200
 //02-17 18:14:30.173: I/CianTask(7766): JSON: flat lat 55.8911 flat lng 37.6111
 //02-17 18:14:30.174: I/CianTask(7766): JSON: destantion 937.005
-//02-17 18:14:30.175: I/CianTask(7766): JSON: metro  �������� (937m)
+//02-17 18:14:30.175: I/CianTask(7766): JSON: metro  пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (937m)
 
 
 
