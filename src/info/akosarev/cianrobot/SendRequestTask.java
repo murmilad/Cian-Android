@@ -75,6 +75,50 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
         return response;
     }
 
+	public String  performJSONCall(String requestURL, String json) {
+
+        URL url;
+        String response = "";
+        try {
+            url = new URL(requestURL);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(60000);
+            conn.setConnectTimeout(60000);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(json);
+
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode=conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                String line;
+                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line=br.readLine()) != null) {
+                    response+=line;
+                }
+            } else {
+            	Log.e("Downloader", "HTTP NOK: " + responseCode);    
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Downloader", "HTTP error: " + e.toString());
+
+        }
+
+        return response;
+    }
 	public String  performGetCall(String requestURL) {
 
         System.setProperty("http.agent", "");
