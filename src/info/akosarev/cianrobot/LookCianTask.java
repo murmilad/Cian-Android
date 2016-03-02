@@ -168,7 +168,13 @@ public class LookCianTask implements Runnable {
 		    		editor.putLong("price" + flatId, flatPrice);
 					editor.putStringSet("taskId", taskIdSet);
 					Log.i("CianTask", "commit " + flatId +  " apply " + editor.commit());
-								
+
+				    try {
+		        	    Thread.sleep(5000);
+		        	} catch(InterruptedException ex) {
+		        		ex.printStackTrace();
+		        	}
+
 		    	} else {
 		    		taskIdSet.add(flatId);
 		    		editor.putLong("price" + flatId, flatPrice);
@@ -184,7 +190,7 @@ public class LookCianTask implements Runnable {
 		while (true) {
     		try {
 	
-	    		if (((Integer)0).equals(((int)seconds % 60*2))) {
+	    		if (((Integer)0).equals(((int)seconds % 60*4))) {
 			
 	    			List<HashMap<String, Object>> flats = new LinkedList<HashMap<String, Object>>();
 	    			flats = cian.lookForFlats(settings, editor, handler);

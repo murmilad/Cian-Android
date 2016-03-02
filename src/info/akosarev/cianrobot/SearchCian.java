@@ -120,10 +120,16 @@ public class SearchCian extends Search {
 					    }
 
 			    	}
+			    	
 			    }
 		    } catch (JSONException e) {
 				e.printStackTrace();
 			}
+		    try {
+        	    Thread.sleep(1000);
+        	} catch(InterruptedException ex) {
+        		ex.printStackTrace();
+        	}
 	    }
 
 	    Log.i("CianTask", "JSON: equal count " + equalCount);
