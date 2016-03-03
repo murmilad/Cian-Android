@@ -2,16 +2,23 @@ package info.akosarev.cianrobot;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.HttpsURLConnection;
+
+
+
 
 
 import android.os.AsyncTask;
@@ -22,64 +29,66 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
 	@Override
 	protected String doInBackground(Object...  objects) {
 		String response = "";
-		if ((Boolean) objects[0]) {
-			response = performPostCall((String)objects[1], (HashMap<String, String>) objects[2]);
-		} else {
-			response = performGetCall((String)objects[1]);
+		try {
+			if ((Boolean) objects[0]) {
+					response = performPostCall((String)objects[1], (HashMap<String, String>) objects[2]);
+			} else {
+				response = performGetCall((String)objects[1]);
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return response;
 	}
 
 	public String  performPostCall(String requestURL,
-            HashMap<String, String> postDataParams) {
+            HashMap<String, String> postDataParams) throws IOException {
 
         URL url;
         String response = "";
-        try {
-            url = new URL(requestURL);
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(60000);
-            conn.setConnectTimeout(60000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
+        url = new URL(requestURL);
+
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(60000);
+        conn.setConnectTimeout(60000);
+        conn.setRequestMethod("POST");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
 
 
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(postDataParams));
+        OutputStream os = conn.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(getPostDataString(postDataParams));
 
-            writer.flush();
-            writer.close();
-            os.close();
-            int responseCode=conn.getResponseCode();
+        writer.flush();
+        writer.close();
+        os.close();
+        int responseCode=conn.getResponseCode();
 
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    response+=line;
-                }
-            } else {
-            	Log.e("Downloader", "HTTP NOK: ");    
+        if (responseCode == HttpsURLConnection.HTTP_OK) {
+            String line;
+            BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            while ((line=br.readLine()) != null) {
+                response+=line;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("Downloader", "HTTP error: " + e.toString());
-
+        } else {
+        	Log.e("Downloader", "HTTP NOK: " + responseCode);    
+        	throw new IOException("HTTP NOK: " + responseCode);
         }
 
         return response;
     }
 
-	public String  performJSONCall(String requestURL, String json) {
+	public String  performJSONCall(String requestURL, String json) throws IOException {
 
         URL url;
         String response = "";
-        try {
+
             url = new URL(requestURL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -110,32 +119,29 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
                 }
             } else {
             	Log.e("Downloader", "HTTP NOK: " + responseCode);    
+            	throw new IOException("HTTP NOK: " + responseCode);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("Downloader", "HTTP error: " + e.toString());
-
-        }
 
         return response;
     }
-	public String  performGetCall(String requestURL) {
+	public String  performGetCall(String requestURL) throws IOException {
 
         System.setProperty("http.agent", "");
 
         URL url;
         String response = "";
-        try {
-            url = new URL(requestURL);
-            
+        url = new URL(requestURL);
+        
 //            Log.i("CianTask", " requestURL " + url.toString());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            
-            conn.setReadTimeout(15*1000);
-            conn.connect();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        
+        conn.setReadTimeout(15*1000);
+        conn.connect();
 
+        int responseCode=conn.getResponseCode();
 
+        if (responseCode == HttpsURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -144,9 +150,10 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
             	stringBuilder.append(line + "\n");
             }
             response = stringBuilder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("Downloader", "HTTP error: " + e.toString());
+        } else {
+        	Log.e("Downloader", "HTTP NOK: " + responseCode);    
+        	throw new IOException("HTTP NOK: " + responseCode);
+
         }
 
         return response;

@@ -1,5 +1,6 @@
 package info.akosarev.cianrobot;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -23,7 +24,7 @@ public class SearchDomofond extends Search {
 	static String GIS_API_KEY = "rusazx2220";
 
 	@Override
-	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) {
+	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
 		List<String> objects = new LinkedList<String>();
 
 		Integer equalCount = 0;
@@ -83,7 +84,10 @@ public class SearchDomofond extends Search {
 				    	flat.put("clossestStation", "м." + flatObject.getString("areaName") + " (" + flatObject.getString("distanceToMetro") + ")");
 			    		flat.put("clossestDestantion", Long.parseLong(flatObject.getString("distanceToMetro").replaceAll(" м", "")));
 	
-			    		if (!taskIdSet.contains("domofond_" + flatObject.getString("listingId"))) {
+			    		String flatAddress = settings.getString("flatAddress" + "domofond_" + flatObject.getString("listingId"), "");
+			    		String flatFlat = settings.getString("flatFlat" + "domofond_" + flatObject.getString("listingId"), "");
+
+			    		if ("".equals(flatAddress)) {
 	//	            		response = new SendRequestTask().doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+flatObject.getString("longitude")+","+flatObject.getString("latitude")+"&types=house&format=short&version=1.3&key=" + GIS_API_KEY);
 	//	
 	//	    			    JSONObject addresesObject = new JSONObject(response);
@@ -99,19 +103,24 @@ public class SearchDomofond extends Search {
 		                    Pattern addressPattern = Pattern.compile("<span itemprop=address>\\s*([^<]+)\\s*</span>");
 		                    Matcher addressMatcher = addressPattern.matcher(response);
 		                    if (addressMatcher.find()){
-		    			    	flat.put("flatAddress", addressMatcher.group(1));
+		                    	flatAddress = addressMatcher.group(1);
 		    			    } else {
-		    			    	flat.put("flatAddress", "Нет адреса");
+		    			    	flatAddress = "Нет адреса";
 		    			    }
 	
 		                    Pattern flatPattern = Pattern.compile("Этаж:\\s*<span>\\s*([^<]+)\\s*</span>");
 		                    Matcher flatMatcher = flatPattern.matcher(response);
 		                    if (flatMatcher.find()){
-		    			    	flat.put("flatFlat", flatMatcher.group(1));
+		    			    	flatFlat = flatMatcher.group(1);
 		    			    } else {
-		    			    	flat.put("flatFlat", "нет");
+		    			    	flatFlat = "нет";
 		    			    }
 			    		}
+
+			    		flat.put("flatAddress", flatAddress);
+			    		flat.put("flatFlat", flatFlat);
+			    		
+			    		
 			    		handler.check(flat);
 			    		objects.add("domofond_" + flatObject.getString("listingId"));
 			    	} catch (JSONException e) {

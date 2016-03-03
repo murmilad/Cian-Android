@@ -1,5 +1,6 @@
 package info.akosarev.cianrobot;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -22,7 +23,7 @@ public class SearchCian extends Search {
 	static String GIS_API_KEY = "rusazx2220";
 
 	@Override
-	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) {
+	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
 		List<String> objects = new LinkedList<String>();
 
 		String generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&engine_version=2&in_polygon[0]=";
@@ -35,7 +36,7 @@ public class SearchCian extends Search {
 	    for (String shape :shapes){
 		    try {
 
-		        String response = new SendRequestTask().doInBackground(false, generatedUrl+shape+"&_=1455551798781");
+		        String response = new SendRequestTask().performGetCall(generatedUrl+shape+"&_=1455551798781");
 		    	
 			    Log.i("CianTask", "JSON: "+shape+" response " + response);
 
@@ -54,6 +55,10 @@ public class SearchCian extends Search {
 			    String responseStatus = flatsCurrentObject.getString("status");
 	
 			    Log.i("CianTask", "JSON: status" + responseStatus);
+
+			    if (!"ok".equals(responseStatus) && !"toomuch".equals(responseStatus)) {
+			    	throw new IOException("response status: " + responseStatus);
+			    }
 	
 			    for (Iterator<String> pointIterator = flatsCurrentObject.getJSONObject("data").getJSONObject("points").keys(); pointIterator.hasNext();) {
 			    	String pointPosition = pointIterator.next();

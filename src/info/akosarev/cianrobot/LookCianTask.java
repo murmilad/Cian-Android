@@ -200,14 +200,13 @@ public class LookCianTask implements Runnable {
 		};
 
 		while (true) {
-    		try {
 	
-	    		if (((Integer)0).equals(((int)seconds % 60*4))) {
-			
+    		if (((Integer)0).equals(((int)seconds % 60*4))) {
+        		try {
+		
 	    			List<String> flats = new LinkedList<String>();
 	    			flats.addAll(cian.lookForFlats(settings, editor, handler));
 	    			flats.addAll(domofond.lookForFlats(settings, editor, handler));
-
 	    			Set<String> newTaskIdSet = new HashSet<String> ();
 
 	    			for (String flatId : taskIdSet) {
@@ -274,14 +273,18 @@ public class LookCianTask implements Runnable {
 					editor.putStringSet("taskId", newTaskIdSet);
 					Log.i("CianTask", "commit " + editor.commit());
 
-	    		}
-	    		seconds++;
-			    try {
-	        	    Thread.sleep(1000);
-	        	} catch(InterruptedException ex) {
+
+	    		} catch(Exception ex) {
+	    			Log.w("CianTask", ex.getMessage());
 	        		ex.printStackTrace();
 	        	}
-    		} catch(Exception ex) {
+    		}
+
+    		seconds++;
+
+    		try {
+        	    Thread.sleep(1000);
+        	} catch(InterruptedException ex) {
         		ex.printStackTrace();
         	}
     	}

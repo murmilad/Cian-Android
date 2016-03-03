@@ -1,5 +1,6 @@
 package info.akosarev.cianrobot;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -26,7 +27,7 @@ public class Search {
 
 		}
 
-		public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler){
+		public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
 			List<String> objects = new LinkedList<String>();
 
 			return objects;
