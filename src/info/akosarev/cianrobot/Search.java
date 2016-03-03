@@ -26,8 +26,8 @@ public class Search {
 
 		}
 
-		public List<HashMap<String, Object>> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler){
-			List<HashMap<String, Object>> objects = new LinkedList<HashMap<String, Object>>();
+		public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler){
+			List<String> objects = new LinkedList<String>();
 
 			return objects;
 		}

@@ -23,8 +23,8 @@ public class SearchDomofond extends Search {
 	static String GIS_API_KEY = "rusazx2220";
 
 	@Override
-	public List<HashMap<String, Object>> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) {
-		List<HashMap<String, Object>> objects = new LinkedList<HashMap<String, Object>>();
+	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) {
+		List<String> objects = new LinkedList<String>();
 
 		Integer equalCount = 0;
 	    Integer flatCount  = 0;
@@ -36,7 +36,7 @@ public class SearchDomofond extends Search {
 	    for (String shape :shapes){
 		    try {
 		    	
-		    	String jsonRequest = "{\"FacetedCriteria\":{\"SearchType\":\"ForSale\",\"SortOrder\":\"0\",\"RegionIds\":\"\",\"CityIds\":\"3584\",\"DistrictIds\":\"\",\"AdminDistrictIds\":\"\",\"MetroIds\":\"\",\"RoadIds\":\"\",\"GeographicPolygon\":\"\",\"AgencyId\":\"\",\"DevelopmentIds\":\"\",\"PropertyType.Value\":\"1\",\"SearchText\":\"\",\"HouseType.Value\":\"\",\"LandCategory.Value\":\"\",\"BusinessType.Value\":\"\",\"ApartmentStyle.Value\":\"\",\"HouseStyle.Value\":\"\",\"Rooms1\":\"False\",\"Rooms2\":\"True\",\"Rooms3\":\"True\",\"Rooms4Plus\":\"False\",\"RoomsFreePlan\":\"False\",\"RoomsStudio\":\"False\",\"RentalRate.Value\":\"9999\",\"SalePriceFrom.Value\":\"1000000\",\"SalePriceTo.Value\":\"8000000\",\"SalePerMeterPriceFrom.Value\":\"\",\"SalePerMeterPriceTo.Value\":\"\",\"SalePerCellPriceFrom.Value\":\"\",\"SalePerCellPriceTo.Value\":\"\",\"DistanceFromMetro.Value\":\"2\",\"HouseAreaType.Value\":\"0\",\"HouseAreaFrom.Value\":\"\",\"HouseAreaTo.Value\":\"\",\"PlotAreaFrom.Value\":\"\",\"PlotAreaTo.Value\":\"\",\"ApartmentAreaFrom.Value\":\"48\",\"ApartmentAreaTo.Value\":\"\",\"RoomAreaFrom.Value\":\"48\",\"RoomAreaTo.Value\":\"\",\"CommercialAreaFrom.Value\":\"48\",\"CommercialAreaTo.Value\":\"\",\"FloorFrom.Value\":\"2\",\"FloorTo.Value\":\"\",\"NotLastFloor.Value\":\"False\",\"NumberOfFloorsFrom.Value\":\"6\",\"NumberOfFloorsTo.Value\":\"\",\"DistanceToCity.Value\":\"\",\"ConstructionMaterial.Value\":\"\",\"ProjectedCompletionDateFrom.Value\":\"\",\"ProjectedCompletionDateTo.Value\":\"\",\"ProjectStage.Value\":\"\",\"WithPhotos.Value\":\"False\",\"IsMapped\":\"False\",\"Finishing.Value\":\"False\",\"ApartmentSaleType.Value\":\"\",\"PrivateListings.Value\":\"\",\"IsMapSearch\":true},\"SelectedListingId\":null,\"Page\":1,\"updateAd\":false,\"LocationSearchBar.SearchType\":\"ForSale\",\"LocationSearchBar.SelectArea.AreaId\":\"3584\",\"LocationSearchBar.SelectArea.AreaType\":\"City\",\"LocationSearchBar.AgencyId\":null,\"LocationSearchBar.CityIds\":\"\",\"LocationSearchBar.DistrictIds\":\"\",\"LocationSearchBar.MetroIds\":\"\",\"LocationSearchBar.RoadIds\":\"\",\"LocationSearchBar.GeographicPolygon\":\"[[\\\""
+		    	String jsonRequest = "{\"FacetedCriteria\":{\"SearchType\":\"ForSale\",\"SortOrder\":\"0\",\"RegionIds\":\"\",\"CityIds\":\"3584\",\"DistrictIds\":\"\",\"AdminDistrictIds\":\"\",\"MetroIds\":\"\",\"RoadIds\":\"\",\"GeographicPolygon\":\"\",\"AgencyId\":\"\",\"DevelopmentIds\":\"\",\"PropertyType.Value\":\"1\",\"SearchText\":\"\",\"HouseType.Value\":\"\",\"LandCategory.Value\":\"\",\"BusinessType.Value\":\"\",\"ApartmentStyle.Value\":\"\",\"HouseStyle.Value\":\"\",\"Rooms1\":\"False\",\"Rooms2\":\"True\",\"Rooms3\":\"True\",\"Rooms4Plus\":\"False\",\"RoomsFreePlan\":\"False\",\"RoomsStudio\":\"False\",\"RentalRate.Value\":\"9999\",\"SalePriceFrom.Value\":\"1000000\",\"SalePriceTo.Value\":\"8000000\",\"SalePerMeterPriceFrom.Value\":\"\",\"SalePerMeterPriceTo.Value\":\"\",\"SalePerCellPriceFrom.Value\":\"\",\"SalePerCellPriceTo.Value\":\"\",\"DistanceFromMetro.Value\":\"2\",\"HouseAreaType.Value\":\"0\",\"HouseAreaFrom.Value\":\"\",\"HouseAreaTo.Value\":\"\",\"PlotAreaFrom.Value\":\"\",\"PlotAreaTo.Value\":\"\",\"ApartmentAreaFrom.Value\":\"48\",\"ApartmentAreaTo.Value\":\"\",\"RoomAreaFrom.Value\":\"48\",\"RoomAreaTo.Value\":\"\",\"CommercialAreaFrom.Value\":\"48\",\"CommercialAreaTo.Value\":\"\",\"FloorFrom.Value\":\"\",\"FloorTo.Value\":\"\",\"NotLastFloor.Value\":\"False\",\"NumberOfFloorsFrom.Value\":\"\",\"NumberOfFloorsTo.Value\":\"\",\"DistanceToCity.Value\":\"\",\"ConstructionMaterial.Value\":\"\",\"ProjectedCompletionDateFrom.Value\":\"\",\"ProjectedCompletionDateTo.Value\":\"\",\"ProjectStage.Value\":\"\",\"WithPhotos.Value\":\"False\",\"IsMapped\":\"False\",\"Finishing.Value\":\"False\",\"ApartmentSaleType.Value\":\"\",\"PrivateListings.Value\":\"\",\"IsMapSearch\":true},\"SelectedListingId\":null,\"Page\":1,\"updateAd\":false,\"LocationSearchBar.SearchType\":\"ForSale\",\"LocationSearchBar.SelectArea.AreaId\":\"3584\",\"LocationSearchBar.SelectArea.AreaType\":\"City\",\"LocationSearchBar.AgencyId\":null,\"LocationSearchBar.CityIds\":\"\",\"LocationSearchBar.DistrictIds\":\"\",\"LocationSearchBar.MetroIds\":\"\",\"LocationSearchBar.RoadIds\":\"\",\"LocationSearchBar.GeographicPolygon\":\"[[\\\""
 		    			+ shape.replaceAll(",", "\\\\\"],[\\\\\"").replaceAll("_", "\\\\\",\\\\\"")
 		    			+ "\\\"]]\",\"LocationSearchBar.AdminDistrictIds\":\"\",\"LocationSearchBar.DevelopmentIds\":\"\"}";
 
@@ -69,43 +69,55 @@ public class SearchDomofond extends Search {
 
 			    	HashMap<String, Object> flat = new HashMap<String, Object>();
 
-
-			    	flat.put("flatId", "domofond_" + flatObject.getString("listingId"));
-			    	flat.put("flatType", flatObject.getString("description"));
-			    	flat.put("flatArea", flatObject.getString("size"));
-			    	flat.put("flatPrice", Long.parseLong(flatObject.getString("price").replaceAll("РУБ.", "").replaceAll("\\s", "")));
-			    	flat.put("flatUrl", "http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
-//						    	flat.put("pointPosition", pointPosition);
-			    	flat.put("clossestStation", "м." + flatObject.getString("areaName") + " (" + flatObject.getString("distanceToMetro") + ")");
-		    		flat.put("clossestDestantion", Long.parseLong(flatObject.getString("distanceToMetro").replaceAll(" м", "")));
-
-		    		if (!taskIdSet.contains("domofond_" + flatObject.getString("listingId"))) {
-//	            		response = new SendRequestTask().doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+flatObject.getString("longitude")+","+flatObject.getString("latitude")+"&types=house&format=short&version=1.3&key=" + GIS_API_KEY);
-//	
-//	    			    JSONObject addresesObject = new JSONObject(response);
-//	
-//	    			    if (Long.parseLong(addresesObject.getString("total")) > 0) {
-//	    			    	JSONArray addressObjects = addresesObject.getJSONArray("result");
-//	    			    	JSONObject addressObject = (JSONObject) addressObjects.get(0);
-//	    			    	
-//	    			    	flat.put("flatAddress", addressObject.getJSONObject("attributes").getString("street") + " " + addressObject.getJSONObject("attributes").getString("number"));
-//	    			    }
-	            		response = new SendRequestTask().doInBackground(false, "http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
-	            		
-	                    Pattern addressPattern = Pattern.compile("<span itemprop=address>\\s*([^<]+)\\s*</span>");
-	                    Matcher addressMatcher = addressPattern.matcher(response);
-	                    if (addressMatcher.find()){
-	    			    	flat.put("flatAddress", addressMatcher.group(1));
-	    			    }
-
-	                    Pattern flatPattern = Pattern.compile("Этаж:\\s*<span>\\s*([^<]+)\\s*</span>");
-	                    Matcher flatMatcher = flatPattern.matcher(response);
-	                    if (flatMatcher.find()){
-	    			    	flat.put("flatFlat", flatMatcher.group(1));
-	    			    }
-		    		}
-		    		handler.check(flat);
-		    		objects.add(flat);
+			    	try {
+				    	flat.put("flatId", "domofond_" + flatObject.getString("listingId"));
+				    	flat.put("flatType", flatObject.getJSONObject("listingAnchor").getString("title"));
+				    	try {
+				    		flat.put("flatArea", flatObject.getString("size"));
+				    	} catch (JSONException e) {
+							e.printStackTrace();
+						} 
+				    	flat.put("flatPrice", Long.parseLong(flatObject.getString("price").replaceAll("РУБ.", "").replaceAll("\\s", "")));
+				    	flat.put("flatUrl", "http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
+	//						    	flat.put("pointPosition", pointPosition);
+				    	flat.put("clossestStation", "м." + flatObject.getString("areaName") + " (" + flatObject.getString("distanceToMetro") + ")");
+			    		flat.put("clossestDestantion", Long.parseLong(flatObject.getString("distanceToMetro").replaceAll(" м", "")));
+	
+			    		if (!taskIdSet.contains("domofond_" + flatObject.getString("listingId"))) {
+	//	            		response = new SendRequestTask().doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+flatObject.getString("longitude")+","+flatObject.getString("latitude")+"&types=house&format=short&version=1.3&key=" + GIS_API_KEY);
+	//	
+	//	    			    JSONObject addresesObject = new JSONObject(response);
+	//	
+	//	    			    if (Long.parseLong(addresesObject.getString("total")) > 0) {
+	//	    			    	JSONArray addressObjects = addresesObject.getJSONArray("result");
+	//	    			    	JSONObject addressObject = (JSONObject) addressObjects.get(0);
+	//	    			    	
+	//	    			    	flat.put("flatAddress", addressObject.getJSONObject("attributes").getString("street") + " " + addressObject.getJSONObject("attributes").getString("number"));
+	//	    			    }
+		            		response = new SendRequestTask().doInBackground(false, "http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
+		            		
+		                    Pattern addressPattern = Pattern.compile("<span itemprop=address>\\s*([^<]+)\\s*</span>");
+		                    Matcher addressMatcher = addressPattern.matcher(response);
+		                    if (addressMatcher.find()){
+		    			    	flat.put("flatAddress", addressMatcher.group(1));
+		    			    } else {
+		    			    	flat.put("flatAddress", "Нет адреса");
+		    			    }
+	
+		                    Pattern flatPattern = Pattern.compile("Этаж:\\s*<span>\\s*([^<]+)\\s*</span>");
+		                    Matcher flatMatcher = flatPattern.matcher(response);
+		                    if (flatMatcher.find()){
+		    			    	flat.put("flatFlat", flatMatcher.group(1));
+		    			    } else {
+		    			    	flat.put("flatFlat", "нет");
+		    			    }
+			    		}
+			    		handler.check(flat);
+			    		objects.add("domofond_" + flatObject.getString("listingId"));
+			    	} catch (JSONException e) {
+						e.printStackTrace();
+						Log.w("CianTask", "JSON: " + flatObject.toString());
+					} 
 			    }
 		    } catch (JSONException e) {
 				e.printStackTrace();
@@ -129,6 +141,7 @@ public class SearchDomofond extends Search {
 
 
 }
+//03-03 13:56:53.932: W/CianTask(20401): JSON: {"name":"ЖК «Ботанический сад»","location":"Лазоревый пр-д, вл. 3","completionDate":"3 кв. 2017","type":1,"listingId":37346,"price":"7 456 955 - 53 996 400 РУБ.","latitude":55.8468781,"longitude":37.6371956,"isFavourite":false,"listingAnchor":{"url":"\/novostroiki\/kvartira-na-prodazhu\/zhk_botanicheskiy_sad-37346","title":"Новостройка ЖК «Ботанический сад», Москва, Московская область","text":null,"target":null},"useLazyLoading":true,"showMarker":true,"hasMetro":true,"metroColors":["http:\/\/www.domofond.ru\/shared\/tintmetroicon?color=%23F58631"],"metroId":33,"distanceToMetro":"260 м","areaName":"Ботанический сад","hasThumbnail":true,"thumbnailSrc":"http:\/\/images.domofond.ru\/427095654\/207x171","prefixedListingId":"d37346"}
 
 //{"FacetedCriteria":{"SearchType":"ForSale","SortOrder":"0","RegionIds":"","CityIds":"3584","DistrictIds":"","AdminDistrictIds":"","MetroIds":"","RoadIds":"","GeographicPolygon":"","AgencyId":"","DevelopmentIds":"","PropertyType.Value":"1","SearchText":"","HouseType.Value":"","LandCategory.Value":"","BusinessType.Value":"","ApartmentStyle.Value":"","HouseStyle.Value":"","Rooms1":"False","Rooms2":"True","Rooms3":"True","Rooms4Plus":"False","RoomsFreePlan":"False","RoomsStudio":"False","RentalRate.Value":"9999","SalePriceFrom.Value":"1000000","SalePriceTo.Value":"8000000","SalePerMeterPriceFrom.Value":"","SalePerMeterPriceTo.Value":"","SalePerCellPriceFrom.Value":"","SalePerCellPriceTo.Value":"","DistanceFromMetro.Value":"2","HouseAreaType.Value":"0","HouseAreaFrom.Value":"","HouseAreaTo.Value":"","PlotAreaFrom.Value":"","PlotAreaTo.Value":"","ApartmentAreaFrom.Value":"48","ApartmentAreaTo.Value":"","RoomAreaFrom.Value":"48","RoomAreaTo.Value":"","CommercialAreaFrom.Value":"48","CommercialAreaTo.Value":"","FloorFrom.Value":"2","FloorTo.Value":"","NotLastFloor.Value":"False","NumberOfFloorsFrom.Value":"6","NumberOfFloorsTo.Value":"","DistanceToCity.Value":"","ConstructionMaterial.Value":"","ProjectedCompletionDateFrom.Value":"","ProjectedCompletionDateTo.Value":"","ProjectStage.Value":"","WithPhotos.Value":"False","IsMapped":"False","Finishing.Value":"False","ApartmentSaleType.Value":"","PrivateListings.Value":"","IsMapSearch":true},"SelectedListingId":null,"Page":1,"updateAd":false,"LocationSearchBar.SearchType":"ForSale","LocationSearchBar.SelectArea.AreaId":"3584","LocationSearchBar.SelectArea.AreaType":"City","LocationSearchBar.AgencyId":null,"LocationSearchBar.CityIds":"","LocationSearchBar.DistrictIds":"","LocationSearchBar.MetroIds":"","LocationSearchBar.RoadIds":"","LocationSearchBar.GeographicPolygon":"[[\"55.62403\",\"37.74246\"],[\"55.62403\",\"37.73782\",3.0999999999962084e-7],[\"55.62383\",\"37.73628\",2.066000000002023e-7],[\"55.62354\",\"37.73508\",2.279999999930398e-7],[\"55.62306\",\"37.73388\",2.9520000001097326e-7],[\"55.62247\",\"37.73302\",4.4139999999329576e-7],[\"55.62160\",\"37.73250\",2.576999999971858e-7],[\"55.62082\",\"37.73233\",9.860000000233995e-8],[\"55.62024\",\"37.73233\",9.860000000233995e-8],[\"55.61966\",\"37.73250\",2.675999999945179e-7],[\"55.61888\",\"37.73319\",1.962000000107242e-7],[\"55.61800\",\"37.73422\",6.081999999951615e-7],[\"55.61742\",\"37.73559\",1.588000000079427e-7],[\"55.61694\",\"37.73645\",1.5480000000902703e-7],[\"55.61616\",\"37.73817\",0.0000011079999999954038],[\"55.61548\",\"37.74109\",1.1640000000355019e-7],[\"55.61528\",\"37.74212\",2.1529999999883298e-7],[\"55.61519\",\"37.74366\",1.9909999999878062e-7],[\"55.61490\",\"37.74641\",3.9729999999997426e-7],[\"55.61490\",\"37.75156\",4.559999999987272e-7],[\"55.61528\",\"37.75310\",6.464000000078299e-7],[\"55.61587\",\"37.75379\",2.303999999957002e-7],[\"55.61664\",\"37.75430\",5.457000000012436e-7],[\"55.61995\",\"37.75430\",7.480000000017004e-7],[\"55.62140\",\"37.75345\",8.44999999995919e-7],[\"55.62276\",\"37.75207\",4.934000000048482e-7],[\"55.62325\",\"37.75121\",1.6929999999549475e-7],[\"55.62364\",\"37.75018\",6.630000000670406e-8],[\"55.62403\",\"37.74898\",1.9889999999154832e-7],[\"55.62442\",\"37.74727\",3.45900000010403e-7],[\"55.62461\",\"37.74555\",6.650000001045474e-8],[\"55.62480\",\"37.74418\",2.6220000000430584e-7],[\"55.62480\",\"37.74280\",2.7599999999885564e-7],[\"55.62500\",\"37.74074\",5.459999999266848e-8],[\"55.62519\",\"37.73851\",1.9069999999195597e-7],[\"55.62548\",\"37.73611\",3.6679999999873096e-7],[\"55.62568\",\"37.73319\"]]","LocationSearchBar.AdminDistrictIds":"","LocationSearchBar.DevelopmentIds":""}
 //{"FacetedCriteria":{"SearchType":"ForSale","SortOrder":"0","RegionIds":"","CityIds":"3584","DistrictIds":"","AdminDistrictIds":"","MetroIds":"","RoadIds":"","GeographicPolygon":"","AgencyId":"","DevelopmentIds":"","PropertyType.Value":"1","SearchText":"","HouseType.Value":"","LandCategory.Value":"","BusinessType.Value":"","ApartmentStyle.Value":"","HouseStyle.Value":"","Rooms1":"False","Rooms2":"True","Rooms3":"True","Rooms4Plus":"False","RoomsFreePlan":"False","RoomsStudio":"False","RentalRate.Value":"9999","SalePriceFrom.Value":"1000000","SalePriceTo.Value":"8000000","SalePerMeterPriceFrom.Value":"","SalePerMeterPriceTo.Value":"","SalePerCellPriceFrom.Value":"","SalePerCellPriceTo.Value":"","DistanceFromMetro.Value":"2","HouseAreaType.Value":"0","HouseAreaFrom.Value":"","HouseAreaTo.Value":"","PlotAreaFrom.Value":"","PlotAreaTo.Value":"","ApartmentAreaFrom.Value":"48","ApartmentAreaTo.Value":"","RoomAreaFrom.Value":"48","RoomAreaTo.Value":"","CommercialAreaFrom.Value":"48","CommercialAreaTo.Value":"","FloorFrom.Value":"2","FloorTo.Value":"","NotLastFloor.Value":"False","NumberOfFloorsFrom.Value":"6","NumberOfFloorsTo.Value":"","DistanceToCity.Value":"","ConstructionMaterial.Value":"","ProjectedCompletionDateFrom.Value":"","ProjectedCompletionDateTo.Value":"","ProjectStage.Value":"","WithPhotos.Value":"False","IsMapped":"False","Finishing.Value":"False","ApartmentSaleType.Value":"","PrivateListings.Value":"","IsMapSearch":true},"SelectedListingId":null,"Page":1,"updateAd":false,"LocationSearchBar.SearchType":"ForSale","LocationSearchBar.SelectArea.AreaId":"3584","LocationSearchBar.SelectArea.AreaType":"City","LocationSearchBar.AgencyId":null,"LocationSearchBar.CityIds":"","LocationSearchBar.DistrictIds":"","LocationSearchBar.MetroIds":"","LocationSearchBar.RoadIds":"","LocationSearchBar.GeographicPolygon":"[[\"55.806958\",\"37.715022\"][\"55.806025\",\"37.722832\"][\"55.803387\",\"37.729291\"][\"55.7995\",\"37.733281\"][\"55.795037\",\"37.734114\"][\"55.790769\",\"37.731645\"][\"55.787435\",\"37.726303\"][\"55.78561\",\"37.719012\"][\"55.78561\",\"37.711031\"][\"55.787435\",\"37.70374\"][\"55.790769\",\"37.698398\"][\"55.795037\",\"37.695929\"][\"55.7995\",\"37.696762\"][\"55.803387\",\"37.700752\"][\"55.806025\",\"37.707211\"]]","LocationSearchBar.AdminDistrictIds":"","LocationSearchBar.DevelopmentIds":""} response 

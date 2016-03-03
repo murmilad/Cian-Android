@@ -22,10 +22,10 @@ public class SearchCian extends Search {
 	static String GIS_API_KEY = "rusazx2220";
 
 	@Override
-	public List<HashMap<String, Object>> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) {
-		List<HashMap<String, Object>> objects = new LinkedList<HashMap<String, Object>>();
+	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) {
+		List<String> objects = new LinkedList<String>();
 
-		String generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&minfloor=2&minfloorn=6&engine_version=2&in_polygon[0]=";
+		String generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&engine_version=2&in_polygon[0]=";
 
 		Integer equalCount = 0;
 	    Integer flatCount  = 0;
@@ -116,7 +116,7 @@ public class SearchCian extends Search {
 					    		flat.put("clossestDestantion", clossestDestantion);
 
 					    		handler.check(flat);
-					    		objects.add(flat);
+					    		objects.add("cian_" + flatObject.getString("id"));
 					    }
 
 			    	}
