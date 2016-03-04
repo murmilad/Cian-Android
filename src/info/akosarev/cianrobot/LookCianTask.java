@@ -275,7 +275,7 @@ public class LookCianTask implements Runnable {
 
 
 	    		} catch(Exception ex) {
-	    			Log.w("CianTask", ex.getMessage());
+	    			Log.w("CianTask", ex.toString());
 	        		ex.printStackTrace();
 	        	}
     		}
