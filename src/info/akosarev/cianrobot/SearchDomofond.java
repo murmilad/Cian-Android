@@ -78,7 +78,18 @@ public class SearchDomofond extends Search {
 				    	} catch (JSONException e) {
 							e.printStackTrace();
 						} 
-				    	flat.put("flatPrice", Long.parseLong(flatObject.getString("price").replaceAll("РУБ.", "").replaceAll("\\s", "")));
+				    	try {
+				    		flat.put("flatPrice", Long.parseLong(flatObject.getString("price").replaceAll("РУБ.", "").replaceAll("\\s", "")));
+				    	} catch (NumberFormatException e) {
+		                    Pattern flatPricePattern = Pattern.compile("(\\d+)-(\\d+)");
+		                    Matcher flatPriceMatcher = flatPricePattern.matcher(flatObject.getString("price"));
+		                    if (flatPriceMatcher.find()){
+					    		flat.put("flatPrice", Long.parseLong(flatPriceMatcher.group(1)));
+		    			    } else {
+		    			    	flat.put("flatPrice", new Long(0));
+		    			    }
+
+						} 
 				    	flat.put("flatUrl", "http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
 	//						    	flat.put("pointPosition", pointPosition);
 				    	flat.put("clossestStation", "м." + flatObject.getString("areaName") + " (" + flatObject.getString("distanceToMetro") + ")");
