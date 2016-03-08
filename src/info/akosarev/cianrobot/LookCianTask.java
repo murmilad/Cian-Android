@@ -254,29 +254,31 @@ public class LookCianTask implements Runnable {
 	    		    		String flatUrl = settings.getString("flatUrl" + flatId, "");
 	    			    	Long oldFlatPrice = settings.getLong("price" + flatId, new Long(0));
 
-	                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-	                    	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"" + flatUrl + "\">" + flatAddress + "</a>");
-	                    	shareIntent.setType("text/html");
-	                    	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
-	                    			++messageId, Intent.createChooser(shareIntent, downloaderService.getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
-
-
-	                    	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(flatUrl));
-	               	    	PendingIntent uriPendingIntent =
-	               	    	        PendingIntent.getActivity(downloaderService, messageId, uriIntent, 0);
-
-	    					Notification notification  = new Notification.Builder(downloaderService)
-	                    	  .setCategory(Notification.CATEGORY_MESSAGE)
-	                    	  .setContentTitle(Html.fromHtml("Не актуальна " + flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +")"))
-	                    	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b> не актуальна </b>" + "<br> старая цена: " + dff.format(oldFlatPrice)
-	                    	  )))
-	                    	  .setSmallIcon(R.drawable.ic_notification)
-	                    	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
-	                    	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
-	                    	  .build();
-	  				
-	  				                  	
-	                    	notificationManager.notify("done", messageId, notification);
+	    			    	if (!fraudIdSet.contains(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType)) {
+		                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+		                    	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"" + flatUrl + "\">" + flatAddress + "</a>");
+		                    	shareIntent.setType("text/html");
+		                    	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
+		                    			++messageId, Intent.createChooser(shareIntent, downloaderService.getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
+	
+	
+		                    	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(flatUrl));
+		               	    	PendingIntent uriPendingIntent =
+		               	    	        PendingIntent.getActivity(downloaderService, messageId, uriIntent, 0);
+	
+		    					Notification notification  = new Notification.Builder(downloaderService)
+		                    	  .setCategory(Notification.CATEGORY_MESSAGE)
+		                    	  .setContentTitle(Html.fromHtml("Не актуальна " + flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +")"))
+		                    	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b> не актуальна </b>" + "<br> старая цена: " + dff.format(oldFlatPrice)
+		                    	  )))
+		                    	  .setSmallIcon(R.drawable.ic_notification)
+		                    	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
+		                    	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
+		                    	  .build();
+		  				
+		  				                  	
+		                    	notificationManager.notify("done", messageId, notification);
+	    			    	}
 
 	    		    		editor.remove("price" + flatId);
 	    		    		editor.remove("flatAddress" + flatId);
