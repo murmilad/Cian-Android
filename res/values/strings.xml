@@ -5,5 +5,6 @@
     <string name="progress">Sending an album</string>
     <string name="open">Open</string>
     <string name="share">Share</string>
-
+    <string name="fraud">Fraud</string>
+    
 </resources>

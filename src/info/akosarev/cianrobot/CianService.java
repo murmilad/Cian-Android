@@ -23,7 +23,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.Notification.Builder;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -34,6 +37,9 @@ import android.util.Log;
 
 public class CianService extends IntentService {
 
+	BroadcastReceiver receiver;
+
+	private LookCianTask  cianTask ; 
     public CianService() {
 		super("cianService");
 	}
@@ -44,24 +50,68 @@ public class CianService extends IntentService {
 	static SharedPreferences.Editor editor;
 
     private boolean isRunning  = false;
-    
+    Context applicationContext;
 
-    private Set<String> taskIdSet = new HashSet<String>();
-   
+    @Override
+    public void onCreate() {
+    	// TODO Auto-generated method stub
+    	super.onCreate();
+        IntentFilter filter = new IntentFilter("taskId");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        // Add other actions as needed
+		
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            	Log.i("CianTask", "fraud action " + intent.getAction());
+                if (intent.getAction().equals("taskId")) {
+
+    	    		String taskId = intent.getStringExtra("taskId");
+
+    	    		Log.i("CianTask", "fraud received " + taskId);
+        			
+    				String flatAddress = settings.getString("flatAddress" + taskId, "");
+    	    		String flatType = settings.getString("flatType" + taskId, "");
+    	    		String flatArea = settings.getString("flatArea" + taskId, "");
+    	    		String flatFlat = settings.getString("flatFlat" + taskId, "");
+
+    	    		Log.i("CianTask", "line fraud " + flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType);
+
+    	    		if (!"&&&".equals(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType)) {
+    	    			cianTask.addFraud(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType);
+    	    		}
+            		
+                }
+            }
+            
+
+        };
+
+        registerReceiver(receiver, filter);
+    }
+
     @Override
     public void onHandleIntent(final Intent intent) {
 
     	Log.i(TAG, "Service onStartCommand");
 	
+    	
 
-    	if (intent != null && intent.getStringExtra("uri") != null) {
-	        final String sharedText = intent.getStringExtra("uri");
+    	if (intent != null) {
+    	        cianTask = new LookCianTask(this);
+    	        
+    			cianTask.run();
+    	}
+    }
+    
 
-	        final LookCianTask task = new LookCianTask(this, sharedText);
-	        
-	        task.run();
-	        
-        }
+    @Override
+    public void onDestroy() {
+    	// TODO Auto-generated method stub
+    	super.onDestroy();
+    	unregisterReceiver(receiver);
     }
 
 }

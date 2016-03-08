@@ -60,23 +60,13 @@ public class LookCianTask implements Runnable {
 	static SharedPreferences.Editor editor;
 
     private Set<String> taskIdSet = new HashSet<String>();
+    private Set<String> fraudIdSet = new HashSet<String>();
 
-	LookCianTask(Service downloaderService, String url) {
+	LookCianTask(Service downloaderService) {
 		
 		done = false;
 
 		this.downloaderService = downloaderService;
-		this.url               = url;
-
-        Pattern maxpricePattern = Pattern.compile("maxprice=(\\d+)");
-        Matcher maxpriceMatcher = maxpricePattern.matcher(url);
-
-        if (maxpriceMatcher.find()){
-        
-        	String maxprice = maxpriceMatcher.group(1);
-		
-        	this.maxprice = maxprice;
-        }
 
 		c = Calendar.getInstance(); 
 
@@ -93,9 +83,31 @@ public class LookCianTask implements Runnable {
         editor   = settings.edit();
 
         taskIdSet = settings.getStringSet("taskId", taskIdSet);
-
+        fraudIdSet = settings.getStringSet("fraudId", fraudIdSet);
+//			// delete last 10 items        
+//        int i = 0;
+//        int size = taskIdSet.size();
+//        Set<String> taskIdSetDelete = new HashSet<String>();
+//        for (String taskId: taskIdSet){
+//        	if (i > size - 10 ) {
+//        		taskIdSetDelete.add(taskId);
+//        	}
+//        	
+//        	i++;
+//        }
+//        for (String taskId: taskIdSetDelete){
+//    		taskIdSet.remove(taskId);
+//        }
 	}
 
+	void addFraud (String fraudString) {
+		if (!fraudIdSet.contains(fraudString)) {
+			fraudIdSet.add(fraudString);
+			editor.putStringSet("fraudId", fraudIdSet);
+
+			Log.i("CianTask", "commit fraud " + fraudString + " " + editor.commit());
+		}
+	}
 	
 	public void run() {
 		Integer seconds = 0;
@@ -132,6 +144,7 @@ public class LookCianTask implements Runnable {
 		    	if (
 		    			(!taskIdSet.contains(flatId) || !oldFlatPrice.equals(flatPrice))
 		    			&& clossestDestantion <= 1000
+		    			&& !fraudIdSet.contains(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType)
 		    	){
 				
 			
@@ -140,7 +153,15 @@ public class LookCianTask implements Runnable {
                 	shareIntent.setType("text/html");
                 	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
                 			++messageId, Intent.createChooser(shareIntent, downloaderService.getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
-                	
+
+
+                	Intent fraudIntent = new Intent();
+                	fraudIntent.setAction("taskId");
+                	fraudIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                	fraudIntent.putExtra("taskId", flatId);
+                	PendingIntent fraudPendingIntent = PendingIntent.getBroadcast(downloaderService,
+                			messageId, fraudIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
                 	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(flatUrl));
            	    	PendingIntent uriPendingIntent =
            	    	        PendingIntent.getActivity(downloaderService, messageId, uriIntent, 0);
@@ -155,6 +176,7 @@ public class LookCianTask implements Runnable {
                   	  .setSmallIcon(R.drawable.ic_notification)
                   	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
                   	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
+                	  .addAction(R.drawable.ic_fraud, downloaderService.getString(R.string.fraud), fraudPendingIntent)
                   	  .build();
 				
 				                  	
@@ -232,7 +254,8 @@ public class LookCianTask implements Runnable {
 	                    	shareIntent.setType("text/html");
 	                    	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
 	                    			++messageId, Intent.createChooser(shareIntent, downloaderService.getString(R.string.share)), PendingIntent.FLAG_CANCEL_CURRENT);
-	                    	
+
+
 	                    	Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(flatUrl));
 	               	    	PendingIntent uriPendingIntent =
 	               	    	        PendingIntent.getActivity(downloaderService, messageId, uriIntent, 0);
