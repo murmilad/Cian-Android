@@ -196,8 +196,8 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
         		URL url = new URL(requestURL);
 	
 	            HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
-	            conn.setReadTimeout(2000);
-	            conn.setConnectTimeout(2000);
+	            conn.setReadTimeout(10000);
+	            conn.setConnectTimeout(10000);
 	            conn.setRequestProperty("Content-Type", "application/json");
 	            conn.setRequestProperty("Accept", "application/json");
 	            conn.setRequestMethod("POST");
@@ -263,8 +263,8 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
 		        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 		        conn.setRequestMethod("GET");
 		        
-		        conn.setReadTimeout(2000);
-		        conn.setConnectTimeout(4000);
+		        conn.setReadTimeout(10000);
+		        conn.setConnectTimeout(10000);
 		        conn.connect();
 		
 		        int responseCode=conn.getResponseCode();
