@@ -14,7 +14,7 @@ import android.util.Log;
 public class Search {
 
 		protected List<String> shapes;
-
+		protected List<String> objects;
 		
 		public Search() {
 			this(getMetroShapes());
@@ -27,10 +27,28 @@ public class Search {
 
 		}
 
-		public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
-			List<String> objects = new LinkedList<String>();
+		public List<String> operateFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
 
-			return objects;
+			try {
+				List<String> objects = new LinkedList<String>();
+				
+				objects = lookForFlats(settings, editor, handler);
+				
+				this.objects = objects;
+			} catch(IOException ex) {
+				if (this.objects == null) {
+					throw ex;
+				}
+			} 
+			if (this.objects == null) {
+				throw new IOException("Can't receive data");
+			}
+			return this.objects;
+		}
+
+		public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
+
+			return null;
 		}
 
 

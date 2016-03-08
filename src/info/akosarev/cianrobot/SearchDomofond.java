@@ -22,18 +22,34 @@ import android.util.Log;
 
 public class SearchDomofond extends Search {
 	static String GIS_API_KEY = "rusazx2220";
+	static Integer SKIP_TIMES = 0;
+	private Integer timesCount = SKIP_TIMES;
+
+	private SendRequestTask sender;
+	public SearchDomofond() throws IOException {
+		sender = new SendRequestTask();
+	}
 
 	@Override
 	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
-		List<String> objects = new LinkedList<String>();
+		
 
-		Integer equalCount = 0;
+	    
+	    if (timesCount < SKIP_TIMES) {
+	    	timesCount++;
+	    	return this.objects;
+	    } else {
+	    	timesCount = 0;
+	    }
+
+	    List<String> objects = new  LinkedList<String> ();
+
+	    Integer equalCount = 0;
 	    Integer flatCount  = 0;
 	    Integer cianCount  = 0;
 	    Integer pointCount = 0;
-
+	    
 	    Set<String> taskIdSet = settings.getStringSet("taskId", new HashSet<String>());
-
 	    for (String shape :shapes){
 		    try {
 		    	
@@ -41,7 +57,7 @@ public class SearchDomofond extends Search {
 		    			+ shape.replaceAll(",", "\\\\\"],[\\\\\"").replaceAll("_", "\\\\\",\\\\\"")
 		    			+ "\\\"]]\",\"LocationSearchBar.AdminDistrictIds\":\"\",\"LocationSearchBar.DevelopmentIds\":\"\"}";
 
-		    	String response = new SendRequestTask().performJSONCall("http://www.domofond.ru/karta/search", jsonRequest);
+		    	String response = sender.performJSONCall("http://www.domofond.ru/karta/search", jsonRequest);
 		    	
 			    Log.i("CianTask", "JSON: "+jsonRequest);
 
@@ -99,7 +115,7 @@ public class SearchDomofond extends Search {
 			    		String flatFlat = settings.getString("flatFlat" + "domofond_" + flatObject.getString("listingId"), "");
 
 			    		if ("".equals(flatAddress)) {
-	//	            		response = new SendRequestTask().doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+flatObject.getString("longitude")+","+flatObject.getString("latitude")+"&types=house&format=short&version=1.3&key=" + GIS_API_KEY);
+	//	            		response = sender.performGetCall("http://catalog.api.2gis.ru/geo/search?q="+flatObject.getString("longitude")+","+flatObject.getString("latitude")+"&types=house&format=short&version=1.3&key=" + GIS_API_KEY);
 	//	
 	//	    			    JSONObject addresesObject = new JSONObject(response);
 	//	
@@ -109,7 +125,7 @@ public class SearchDomofond extends Search {
 	//	    			    	
 	//	    			    	flat.put("flatAddress", addressObject.getJSONObject("attributes").getString("street") + " " + addressObject.getJSONObject("attributes").getString("number"));
 	//	    			    }
-		            		response = new SendRequestTask().doInBackground(false, "http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
+		            		response = sender.performGetCall("http://www.domofond.ru" + flatObject.getJSONObject("listingAnchor").getString("url") + "/");
 		            		
 		                    Pattern addressPattern = Pattern.compile("<span itemprop=address>\\s*([^<]+)\\s*</span>");
 		                    Matcher addressMatcher = addressPattern.matcher(response);
@@ -144,12 +160,13 @@ public class SearchDomofond extends Search {
 			}
 		    
 		    try {
-        	    Thread.sleep(1000);
+        	    Thread.sleep(3000);
         	} catch(InterruptedException ex) {
         		ex.printStackTrace();
         	}
 
 	    }
+	    
 //
 //	    Log.i("CianTask", "JSON: equal count " + equalCount);
 //	    Log.i("CianTask", "JSON: flat count " + flatCount);

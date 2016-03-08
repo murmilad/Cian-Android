@@ -21,7 +21,10 @@ import android.util.Log;
 public class SearchCian extends Search {
 
 	static String GIS_API_KEY = "rusazx2220";
-
+	private SendRequestTask sender;
+	public SearchCian() throws IOException {
+		sender = new SendRequestTask();
+	}
 	@Override
 	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
 		List<String> objects = new LinkedList<String>();
@@ -32,11 +35,12 @@ public class SearchCian extends Search {
 	    Integer flatCount  = 0;
 	    Integer cianCount  = 0;
 	    Integer pointCount = 0;
-
+	    
+	    
 	    for (String shape :shapes){
 		    try {
 
-		        String response = new SendRequestTask().performGetCall(generatedUrl+shape+"&_=1455551798781");
+		        String response = sender.performGetCall(generatedUrl+shape+"&_=1455551798781");
 		    	
 			    Log.i("CianTask", "JSON: "+shape+" response " + response);
 
@@ -190,7 +194,7 @@ public class SearchCian extends Search {
             		}
 
             		if (distFrom(Float.parseFloat(flatLat), Float.parseFloat(flatLng), (float) linkPoint.getDoubleLat(),(float) linkPoint.getDoubleLon()) < side) {
-	            		String response = new SendRequestTask().doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat())+"&types=metro&format=short&limit=10&version=1.3&radius=250&key=" + GIS_API_KEY);
+	            		String response = sender.doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat())+"&types=metro&format=short&limit=10&version=1.3&radius=250&key=" + GIS_API_KEY);
 	        		    Log.i("CianTask", "JSON: search point " + dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat()));
 	//        		    Log.i("CianTask", "JSON: metro " + response);
 	        			

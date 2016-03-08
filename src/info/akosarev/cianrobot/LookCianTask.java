@@ -116,8 +116,8 @@ public class LookCianTask implements Runnable {
 
 		downloaderService.startForeground(2, notificationProgressBuilder.build());
 
-		SearchCian cian         = new SearchCian();
-		SearchDomofond domofond = new SearchDomofond();
+		SearchCian cian         = null;
+		SearchDomofond domofond = null;
 
 		CheckHandler handler = new CheckHandler(){
 			public void check(HashMap<String, Object> flat) {
@@ -225,10 +225,15 @@ public class LookCianTask implements Runnable {
 	
     		if (((Integer)0).equals(((int)seconds % 60*4))) {
         		try {
-		
 	    			List<String> flats = new LinkedList<String>();
-	    			flats.addAll(cian.lookForFlats(settings, editor, handler));
-	    			flats.addAll(domofond.lookForFlats(settings, editor, handler));
+		
+       				cian     = new SearchCian();
+	    			flats.addAll(cian.operateFlats(settings, editor, handler));
+
+       				domofond = new SearchDomofond();
+	    			flats.addAll(domofond.operateFlats(settings, editor, handler));
+
+	    			
 	    			Set<String> newTaskIdSet = new HashSet<String> ();
 
 	    			for (String flatId : taskIdSet) {
