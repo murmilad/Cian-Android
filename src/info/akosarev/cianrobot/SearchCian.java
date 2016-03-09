@@ -5,9 +5,11 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +28,8 @@ public class SearchCian extends Search {
 		sender = new SendRequestTask();
 	}
 	@Override
-	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
-		List<String> objects = new LinkedList<String>();
+	public Set<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
+		Set<String> objects = new HashSet<String>();
 
 		String generatedUrl = "http://map.cian.ru/ajax/map/roundabout/?deal_type=2&flats=yes&minprice=1000000&maxprice=8000000&currency=2&room2=1&room3=1&minkarea=8&mintarea=48&engine_version=2&in_polygon[0]=";
 
@@ -132,7 +134,7 @@ public class SearchCian extends Search {
 			    	
 			    }
 		    } catch (JSONException e) {
-				e.printStackTrace();
+				throw new IOException("Cant parse result " + e.toString()); 
 			}
 		    try {
         	    Thread.sleep(1000);

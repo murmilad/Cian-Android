@@ -23,7 +23,6 @@ import android.util.Log;
 public class SearchDomofond extends Search {
 	static String GIS_API_KEY = "rusazx2220";
 	static Integer SKIP_TIMES = 0;
-	private Integer timesCount = SKIP_TIMES;
 
 	private SendRequestTask sender;
 	public SearchDomofond() throws IOException {
@@ -31,18 +30,10 @@ public class SearchDomofond extends Search {
 	}
 
 	@Override
-	public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
+	public Set<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException {
 		
 
-	    
-	    if (timesCount < SKIP_TIMES) {
-	    	timesCount++;
-	    	return this.objects;
-	    } else {
-	    	timesCount = 0;
-	    }
-
-	    List<String> objects = new  LinkedList<String> ();
+		Set<String> objects = new  HashSet<String> ();
 
 	    Integer equalCount = 0;
 	    Integer flatCount  = 0;
@@ -156,7 +147,7 @@ public class SearchDomofond extends Search {
 					} 
 			    }
 		    } catch (JSONException e) {
-				e.printStackTrace();
+		    	throw new IOException("Cant parse result " + e.toString());
 			}
 		    
 		    try {

@@ -141,15 +141,11 @@ public class LookCianTask implements Runnable {
 
 		    	Long oldFlatPrice = settings.getLong("price" + flatId, new Long(0));
 
-				Log.i("CianTask", "fraud compare " + flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType);
-				for (String fraud: fraudIdSet) {
-					Log.i("CianTask", "fraud compare to " + fraud);
-				}
 
 		    	if (
 		    			(!taskIdSet.contains(flatId) || !oldFlatPrice.equals(flatPrice))
 		    			&& clossestDestantion <= 1000
-		    			&& !fraudIdSet.contains(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType)
+		    			&& !fraudIdSet.contains((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""))
 		    	){
 				
 			
@@ -229,14 +225,23 @@ public class LookCianTask implements Runnable {
 		while (true) {
 	
     		if (((Integer)0).equals(((int)seconds % 60*4))) {
-        		try {
-	    			List<String> flats = new LinkedList<String>();
+    			Set<String> flats = new HashSet<String>();
+    			try {
 		
-       				cian     = new SearchCian();
-	    			flats.addAll(cian.operateFlats(settings, editor, handler));
+        			if (cian == null) {
+        				cian     = new SearchCian();
+        			}
+	    			flats.addAll(cian.lookForFlats(settings, editor, handler));
 
-       				domofond = new SearchDomofond();
-	    			flats.addAll(domofond.operateFlats(settings, editor, handler));
+        			if (domofond == null) {
+        				domofond = new SearchDomofond();
+        			}
+	    			flats.addAll(domofond.lookForFlats(settings, editor, handler));
+	    		} catch(Exception ex) {
+	    			Log.w("CianTask", ex.toString());
+	        		ex.printStackTrace();
+	        		flats = taskIdSet;
+	        	}
 
 	    			
 	    			Set<String> newTaskIdSet = new HashSet<String> ();
@@ -309,10 +314,6 @@ public class LookCianTask implements Runnable {
 					Log.i("CianTask", "commit " + editor.commit());
 
 
-	    		} catch(Exception ex) {
-	    			Log.w("CianTask", ex.toString());
-	        		ex.printStackTrace();
-	        	}
     		}
 
     		seconds++;

@@ -7,6 +7,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -14,7 +15,11 @@ import android.util.Log;
 public class Search {
 
 		protected List<String> shapes;
-		protected List<String> objects;
+		private List<String> objects;
+		
+		protected List<String> getObjects() {
+			return objects;
+		}
 		
 		public Search() {
 			this(getMetroShapes());
@@ -27,26 +32,8 @@ public class Search {
 
 		}
 
-		public List<String> operateFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
 
-			try {
-				List<String> objects = new LinkedList<String>();
-				
-				objects = lookForFlats(settings, editor, handler);
-				
-				this.objects = objects;
-			} catch(IOException ex) {
-				if (this.objects == null) {
-					throw ex;
-				}
-			} 
-			if (this.objects == null) {
-				throw new IOException("Can't receive data");
-			}
-			return this.objects;
-		}
-
-		public List<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
+		public Set<String> lookForFlats(SharedPreferences settings, SharedPreferences.Editor editor, CheckHandler handler) throws IOException{
 
 			return null;
 		}
