@@ -141,6 +141,11 @@ public class LookCianTask implements Runnable {
 
 		    	Long oldFlatPrice = settings.getLong("price" + flatId, new Long(0));
 
+				Log.i("CianTask", "fraud compare " + flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType);
+				for (String fraud: fraudIdSet) {
+					Log.i("CianTask", "fraud compare to " + fraud);
+				}
+
 		    	if (
 		    			(!taskIdSet.contains(flatId) || !oldFlatPrice.equals(flatPrice))
 		    			&& clossestDestantion <= 1000
