@@ -264,7 +264,7 @@ public class LookCianTask implements Runnable {
 	    		    		String flatUrl = settings.getString("flatUrl" + flatId, "");
 	    			    	Long oldFlatPrice = settings.getLong("price" + flatId, new Long(0));
 
-	    			    	if (!fraudIdSet.contains(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType)) {
+	    			    	if (!fraudIdSet.contains((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""))) {
 		                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
 		                    	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"" + flatUrl + "\">" + flatAddress + "</a>");
 		                    	shareIntent.setType("text/html");
