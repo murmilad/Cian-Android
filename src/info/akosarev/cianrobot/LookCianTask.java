@@ -139,7 +139,7 @@ public class LookCianTask implements Runnable {
 
 		    	Long clossestDestantion = (Long) flat.get("clossestDestantion");
 
-		    	Long oldFlatPrice = settings.getLong("price" + flatId, new Long(0));
+		    	Long oldFlatPrice = settings.getLong("price" + flatId,  Long.valueOf(0));
 
 	    		Long disappearedFlat = settings.getLong("flatDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + flatPrice).replaceAll("\\s",""), 0);
 	    		
@@ -147,7 +147,7 @@ public class LookCianTask implements Runnable {
 		    			(!taskIdSet.contains(flatId) || !oldFlatPrice.equals(flatPrice))
 		    			&& clossestDestantion <= 1000
 		    			&& !fraudIdSet.contains((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""))
-		    			&& new Long(0).equals(disappearedFlat)
+		    			&&  Long.valueOf(0).equals(disappearedFlat)
 		    	){
 				
 			
@@ -172,7 +172,7 @@ public class LookCianTask implements Runnable {
            			Notification notification  = new Notification.Builder(downloaderService)
                   	  .setCategory(Notification.CATEGORY_MESSAGE)
                   	  .setContentTitle(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") " + dff.format(flatPrice)))
-                  	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b>" + dff.format(flatPrice) + "</b>" + (!oldFlatPrice.equals(flatPrice) && !new Long(0).equals(oldFlatPrice)
+                  	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b>" + dff.format(flatPrice) + "</b>" + (!oldFlatPrice.equals(flatPrice) && ! Long.valueOf(0).equals(oldFlatPrice)
                   	  	? "<br> старая цена: " + dff.format(oldFlatPrice)
                   	  	: ""
                   	  ))))
@@ -215,8 +215,24 @@ public class LookCianTask implements Runnable {
 		    		editor.putString("flatUrl" + flatId, flatUrl);
 		    		editor.putString("flatArea" + flatId, flatArea);
 		    		editor.putString("flatFlat" + flatId, flatFlat);
-					editor.putStringSet("taskId", taskIdSet);
 
+					if (! Long.valueOf(0).equals(disappearedFlat)) {
+						String disappearedFlatId = settings.getString("flatIdDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + flatPrice).replaceAll("\\s",""), "");
+						if (!"".equals(disappearedFlatId)) {
+							taskIdSet.remove(disappearedFlatId);
+	                    	editor.remove("price" + disappearedFlatId);
+	    		    		editor.remove("flatAddress" + disappearedFlatId);
+	    		    		editor.remove("flatClossestStation" + disappearedFlatId);
+	    		    		editor.remove("flatType" + disappearedFlatId);
+	    		    		editor.remove("flatArea" + disappearedFlatId);
+	    		    		editor.remove("flatFlat" + disappearedFlatId);
+	    		    		editor.remove("flatUrl" + disappearedFlatId);
+	    		    		editor.remove("flatDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""));
+	    		    		editor.remove("flatIdDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""));
+						}
+					}
+
+					editor.putStringSet("taskId", taskIdSet);
 					Log.i("CianTask", "commit incapatible " + flatId +  " apply " + editor.commit());
 		    	}
 
@@ -264,14 +280,18 @@ public class LookCianTask implements Runnable {
 	    		    		String flatArea = settings.getString("flatArea" + flatId, "");
 	    		    		String flatFlat = settings.getString("flatFlat" + flatId, "");
 	    		    		String flatUrl = settings.getString("flatUrl" + flatId, "");
-	    			    	Long oldFlatPrice = settings.getLong("price" + flatId, new Long(0));
+	    			    	Long oldFlatPrice = settings.getLong("price" + flatId,  Long.valueOf(0));
 
 	    			    	if (!fraudIdSet.contains((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""))) {
 
 	    			    		Long disappearedFlat = settings.getLong("flatDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""), 0);
-	    			    		
-	    			    		if (disappearedFlat - 60 * 60 * 24 > new java.util.Date().getTime()) {
-			                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+
+	    			    		Log.i("CianTask", "flatDisappeared " + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s","") +  " " + disappearedFlat + " time "  + new java.util.Date().getTime());
+
+	    			    		if (new java.util.Date().getTime() - 60 * 60 * 24 * 1000 > disappearedFlat) {
+		    			    		Log.i("CianTask", "flatDisappeared message " + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s","") +  " " + disappearedFlat + " time "  + new java.util.Date().getTime());
+
+	    			    			Intent shareIntent = new Intent(Intent.ACTION_SEND);
 			                    	shareIntent.putExtra(Intent.EXTRA_TEXT , "<a href=\"" + flatUrl + "\">" + flatAddress + "</a>");
 			                    	shareIntent.setType("text/html");
 			                    	PendingIntent sharePendingIntent = PendingIntent.getActivity(downloaderService.getApplicationContext(),
@@ -291,7 +311,8 @@ public class LookCianTask implements Runnable {
 			                    	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
 			                    	  .addAction(R.drawable.ic_share, downloaderService.getString(R.string.share), sharePendingIntent)
 			                    	  .build();
-			  				
+
+			    					
 			  				                  	
 			                    	notificationManager.notify("done", messageId, notification);
 
@@ -303,12 +324,18 @@ public class LookCianTask implements Runnable {
 			    		    		editor.remove("flatFlat" + flatId);
 			    		    		editor.remove("flatUrl" + flatId);
 			    		    		editor.remove("flatDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""));
+			    		    		editor.remove("flatIdDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""));
 			    		    		Log.i("CianTask", "commit old " + flatId +  " apply " + editor.commit());
 
-	    			    		} else if ((new Long(0)).equals(disappearedFlat)) {
+	    			    		} else if ( Long.valueOf(0).equals(disappearedFlat)) {
 	    			    			editor.putLong("flatDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""), new java.util.Date().getTime());
+	    			    			editor.putString("flatIdDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""), flatId);
+		    			    		Log.i("CianTask", "flatDisappeared new " + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s","") +  " " + disappearedFlat + " time "  + new java.util.Date().getTime());
+		    			    		
 	    			    			newTaskIdSet.add(flatId);
 	    			    		} else {
+		    			    		Log.i("CianTask", "flatDisappeared old " + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s","") +  " " + disappearedFlat + " time "  + new java.util.Date().getTime());
+
 	    			    			newTaskIdSet.add(flatId);
 	    			    		}
 	    			    	} else {
