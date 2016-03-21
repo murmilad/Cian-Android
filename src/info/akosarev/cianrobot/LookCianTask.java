@@ -288,7 +288,10 @@ public class LookCianTask implements Runnable {
 
 	    			    		Log.i("CianTask", "flatDisappeared " + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s","") +  " " + disappearedFlat + " time "  + new java.util.Date().getTime());
 
-	    			    		if (new java.util.Date().getTime() - 60 * 60 * 24 * 1000 > disappearedFlat) {
+	    			    		if (
+	    			    				new java.util.Date().getTime() - 60 * 60 * 24 * 1000 > disappearedFlat
+	    			    				&& !Long.valueOf(0).equals(disappearedFlat)
+	    			    		) {
 		    			    		Log.i("CianTask", "flatDisappeared message " + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s","") +  " " + disappearedFlat + " time "  + new java.util.Date().getTime());
 
 	    			    			Intent shareIntent = new Intent(Intent.ACTION_SEND);
