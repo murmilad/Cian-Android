@@ -5,6 +5,7 @@ import info.akosarev.cianrobot.R;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.HashMap;
@@ -308,7 +309,7 @@ public class LookCianTask implements Runnable {
 			    					Notification notification  = new Notification.Builder(downloaderService)
 			                    	  .setCategory(Notification.CATEGORY_MESSAGE)
 			                    	  .setContentTitle(Html.fromHtml("Не актуальна " + flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +")"))
-			                    	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b> не актуальна с " + new java.util.Date(disappearedFlat) + "</b><br> старая цена: " + dff.format(oldFlatPrice)
+			                    	  .setStyle(new Notification.BigTextStyle().bigText(Html.fromHtml(flatAddress + " " + clossestStation  + " " + flatType + " (" + flatArea + " | " + flatFlat +") <b> не актуальна с " + new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new java.util.Date(disappearedFlat)) + "</b><br> старая цена: " + dff.format(oldFlatPrice)
 			                    	  )))
 			                    	  .setSmallIcon(R.drawable.ic_notification)
 			                    	  .addAction(R.drawable.ic_download, downloaderService.getString(R.string.open), uriPendingIntent)
