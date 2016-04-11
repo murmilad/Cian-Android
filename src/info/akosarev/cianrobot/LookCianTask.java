@@ -146,8 +146,7 @@ public class LookCianTask implements Runnable {
 	    		
 		    	if (
 		    			(!taskIdSet.contains(flatId) || !oldFlatPrice.equals(flatPrice))
-		    			&& clossestDestantion <= 1000
-		    			&& !fraudIdSet.contains((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""))
+		    			&& !fraudIdSet.contains((flatAddress).replaceAll("\\s",""))
 		    			&&  Long.valueOf(0).equals(disappearedFlat)
 		    	){
 				
@@ -283,7 +282,7 @@ public class LookCianTask implements Runnable {
 	    		    		String flatUrl = settings.getString("flatUrl" + flatId, "");
 	    			    	Long oldFlatPrice = settings.getLong("price" + flatId,  Long.valueOf(0));
 
-	    			    	if (!fraudIdSet.contains((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""))) {
+	    			    	if (!fraudIdSet.contains((flatAddress).replaceAll("\\s",""))) {
 
 	    			    		Long disappearedFlat = settings.getLong("flatDisappeared" + (flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType + "&" + oldFlatPrice).replaceAll("\\s",""), 0);
 

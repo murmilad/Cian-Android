@@ -119,6 +119,8 @@ public class SearchCian extends Search {
 					    	        	clossestDestantion = Long.parseLong(destantionMatcher.group(1));
 							    		editor.putString("clossestStation" + pointPosition, clossestStation);
 										editor.putLong("clossestDestantion" + pointPosition, clossestDestantion);
+					    	        } else {
+					    	        	clossestDestantion = (long) 5000;
 					    	        }
 									Log.i("CianTask", "JSON: result  " + clossestStation );
 					    		}
@@ -270,7 +272,7 @@ public class SearchCian extends Search {
 
 	    	Log.i("CianTask", "JSON: metro  " + findMetro + " (" + df.format(findDestantion) + "m)");
 
-	    	return findMetro + " (" + df.format(findDestantion) + "m)";
+	    	return "".equals(findMetro) ? "Метро не найдено" : (findMetro + " (" + df.format(findDestantion) + "m)");
         }
 	    
 	    return null;

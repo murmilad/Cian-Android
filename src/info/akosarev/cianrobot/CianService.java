@@ -80,7 +80,7 @@ public class CianService extends IntentService {
     	    		Log.i("CianTask", "line fraud " + flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType);
 
     	    		if (!"&&&".equals(flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType)) {
-    	    			cianTask.addFraud((flatAddress + "&" + flatFlat + "&" + flatArea + "&" + flatType).replaceAll("\\s",""));
+    	    			cianTask.addFraud((flatAddress).replaceAll("\\s",""));
     	    		}
             		
                 }
