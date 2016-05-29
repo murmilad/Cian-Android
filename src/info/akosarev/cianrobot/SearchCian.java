@@ -39,7 +39,7 @@ public class SearchCian extends Search {
 	    Integer pointCount = 0;
 	    
 	    
-	    for (String shape :shapes){
+	    for (Shape shape :shapes){
 		    try {
 
 		        String response = sender.performGetCall(generatedUrl+shape+"&_=1455551798781");
@@ -153,143 +153,130 @@ public class SearchCian extends Search {
 		return objects;
 	}
 
-	private String getClossestStation(String position){
-		DecimalFormat dff;
-        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-        otherSymbols.setDecimalSeparator('.');
-
-		dff = new DecimalFormat("##.######", otherSymbols);
-    	dff.setRoundingMode(RoundingMode.DOWN);
-
-		String positionUri  = position.replace(" ", ",");
-
-		Pattern downloadPattern = Pattern.compile("([\\d\\.]+) ([\\d\\.]+)");
-        Matcher downloadMatcher = downloadPattern.matcher(position);
-
- 
-        if (downloadMatcher.find()){
-        	String flatLat = downloadMatcher.group(1);
-        	String flatLng = downloadMatcher.group(2);
-
-        	Integer side = 1100;
-        	Integer radius = 240;
-
-        	Coordinate currentCoordinate = calcEndPoint(
-        			new Coordinate((float) (Float.parseFloat(flatLng)), (float) (Float.parseFloat(flatLat))),
-        			(int) Math.round(Math.hypot(side, side)),
-        			(double) 45
-        			);
-        	
-        	Integer step = (int) Math.sqrt(radius*radius/2);
-
-		    JSONArray metroObjects = new JSONArray();
-
-		    Log.i("CianTask", "JSON: search center  " + flatLng +","+ flatLat);
-
-        	for (Integer distanceLng = 0; distanceLng < side * 2; distanceLng = distanceLng + step) {
-        		if (distanceLng > 0) {
-        			currentCoordinate = calcEndPoint(currentCoordinate, step, (double) 180);
-        		}
-            	for (Integer distanceLat = 0; distanceLat < side * 2; distanceLat = distanceLat + step) {
-            		
-            		Coordinate linkPoint = currentCoordinate;
-            		if (distanceLat > 0) {
-            			linkPoint = calcEndPoint(currentCoordinate, distanceLat, (double) 270);
-            		}
-
-            		if (distFrom(Float.parseFloat(flatLat), Float.parseFloat(flatLng), (float) linkPoint.getDoubleLat(),(float) linkPoint.getDoubleLon()) < side) {
-	            		String response = sender.doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat())+"&types=metro&format=short&limit=10&version=1.3&radius=250&key=" + GIS_API_KEY);
-	        		    Log.i("CianTask", "JSON: search point " + dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat()));
-	//        		    Log.i("CianTask", "JSON: metro " + response);
-	        			
-	        		    try {
-	        			    JSONObject metrosObject = new JSONObject(response);
-	        			    String responseStatus = metrosObject.getString("response_code");
-	
-	        			    if (responseStatus.equals("200")) {
-	        	
-	        	
-	//	        			    Log.i("CianTask", "JSON: metro status" + responseStatus);
-		        	
-		        			    
-		        			    JSONArray metroObjectsSphere = metrosObject.getJSONArray("result");
-		        			    
-		        			    for (Integer i = 0; i < metroObjectsSphere.length(); i++) {
-		        			    	metroObjects.put(metroObjectsSphere.get(i));
-		        			    }
-	        			    }
-	
-	        		    } catch (JSONException e) {
-	        				e.printStackTrace();
-	        			}
-            		}
-
-            	}
-            	
-        	}
-	
-		    float  findDestantion = 5000;
-	        String findMetro      = "";
-
-		    try {
-			    for (Integer i = 0; i < metroObjects.length(); i++) {
-	
-			    	JSONObject metroObject = (JSONObject) metroObjects.get(i);
-			    	
-			    	String metroName = metroObject.getString("short_name");
-	
-			    	String metroPosition = metroObject.getString("centroid");
-				    
-			         downloadMatcher = downloadPattern.matcher(metroPosition);
-
-			        if (downloadMatcher.find()){
-			        	String metroLat = downloadMatcher.group(2);
-			        	String metroLng = downloadMatcher.group(1);
-	                
-	                	
-		            	Log.i("CianTask", "JSON: flat lat " + flatLat + " flat lng " + flatLng);
-		            	
-		            	float destantion = distFrom(Float.parseFloat(flatLat), Float.parseFloat(flatLng), Float.parseFloat(metroLat), Float.parseFloat(metroLng));
-		            	if (destantion < findDestantion) {
-		            		findDestantion = destantion;
-		            		findMetro      = metroName;
-		            	}
-		
-		            	Log.i("CianTask", "JSON: destantion " + destantion);
-		
-			        }
-				    
-	
-		    	}
-			    
-			    
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-	
-	    	DecimalFormat df = new DecimalFormat("##");
-	    	df.setRoundingMode(RoundingMode.DOWN);
-
-	    	Log.i("CianTask", "JSON: metro  " + findMetro + " (" + df.format(findDestantion) + "m)");
-
-	    	return "".equals(findMetro) ? "Метро не найдено" : (findMetro + " (" + df.format(findDestantion) + "m)");
-        }
-	    
-	    return null;
-	}
-	
-	 public static float distFrom(float lat1, float lng1, float lat2, float lng2) {
-		    double earthRadius = 6371000; //meters
-		    double dLat = Math.toRadians(lat2-lat1);
-		    double dLng = Math.toRadians(lng2-lng1);
-		    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-		               Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-		               Math.sin(dLng/2) * Math.sin(dLng/2);
-		    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-		    float dist = (float) (earthRadius * c);
-
-		    return dist;
-	}
+//	private String getClossestStation(String position){
+//		DecimalFormat dff;
+//        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+//        otherSymbols.setDecimalSeparator('.');
+//
+//		dff = new DecimalFormat("##.######", otherSymbols);
+//    	dff.setRoundingMode(RoundingMode.DOWN);
+//
+//		String positionUri  = position.replace(" ", ",");
+//
+//		Pattern downloadPattern = Pattern.compile("([\\d\\.]+) ([\\d\\.]+)");
+//        Matcher downloadMatcher = downloadPattern.matcher(position);
+//
+// 
+//        if (downloadMatcher.find()){
+//        	String flatLat = downloadMatcher.group(1);
+//        	String flatLng = downloadMatcher.group(2);
+//
+//        	Integer side = 1100;
+//        	Integer radius = 240;
+//
+//        	Coordinate currentCoordinate = calcEndPoint(
+//        			new Coordinate((float) (Float.parseFloat(flatLng)), (float) (Float.parseFloat(flatLat))),
+//        			(int) Math.round(Math.hypot(side, side)),
+//        			(double) 45
+//        			);
+//        	
+//        	Integer step = (int) Math.sqrt(radius*radius/2);
+//
+//		    JSONArray metroObjects = new JSONArray();
+//
+//		    Log.i("CianTask", "JSON: search center  " + flatLng +","+ flatLat);
+//
+//        	for (Integer distanceLng = 0; distanceLng < side * 2; distanceLng = distanceLng + step) {
+//        		if (distanceLng > 0) {
+//        			currentCoordinate = calcEndPoint(currentCoordinate, step, (double) 180);
+//        		}
+//            	for (Integer distanceLat = 0; distanceLat < side * 2; distanceLat = distanceLat + step) {
+//            		
+//            		Coordinate linkPoint = currentCoordinate;
+//            		if (distanceLat > 0) {
+//            			linkPoint = calcEndPoint(currentCoordinate, distanceLat, (double) 270);
+//            		}
+//
+//            		if (distFrom(Float.parseFloat(flatLat), Float.parseFloat(flatLng), (float) linkPoint.getDoubleLat(),(float) linkPoint.getDoubleLon()) < side) {
+//	            		String response = sender.doInBackground(false, "http://catalog.api.2gis.ru/geo/search?q="+dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat())+"&types=metro&format=short&limit=10&version=1.3&radius=250&key=" + GIS_API_KEY);
+//	        		    Log.i("CianTask", "JSON: search point " + dff.format(linkPoint.getDoubleLon())+","+dff.format(linkPoint.getDoubleLat()));
+//	//        		    Log.i("CianTask", "JSON: metro " + response);
+//	        			
+//	        		    try {
+//	        			    JSONObject metrosObject = new JSONObject(response);
+//	        			    String responseStatus = metrosObject.getString("response_code");
+//	
+//	        			    if (responseStatus.equals("200")) {
+//	        	
+//	        	
+//	//	        			    Log.i("CianTask", "JSON: metro status" + responseStatus);
+//		        	
+//		        			    
+//		        			    JSONArray metroObjectsSphere = metrosObject.getJSONArray("result");
+//		        			    
+//		        			    for (Integer i = 0; i < metroObjectsSphere.length(); i++) {
+//		        			    	metroObjects.put(metroObjectsSphere.get(i));
+//		        			    }
+//	        			    }
+//	
+//	        		    } catch (JSONException e) {
+//	        				e.printStackTrace();
+//	        			}
+//            		}
+//
+//            	}
+//            	
+//        	}
+//	
+//		    float  findDestantion = 5000;
+//	        String findMetro      = "";
+//
+//		    try {
+//			    for (Integer i = 0; i < metroObjects.length(); i++) {
+//	
+//			    	JSONObject metroObject = (JSONObject) metroObjects.get(i);
+//			    	
+//			    	String metroName = metroObject.getString("short_name");
+//	
+//			    	String metroPosition = metroObject.getString("centroid");
+//				    
+//			         downloadMatcher = downloadPattern.matcher(metroPosition);
+//
+//			        if (downloadMatcher.find()){
+//			        	String metroLat = downloadMatcher.group(2);
+//			        	String metroLng = downloadMatcher.group(1);
+//	                
+//	                	
+//		            	Log.i("CianTask", "JSON: flat lat " + flatLat + " flat lng " + flatLng);
+//		            	
+//		            	float destantion = distFrom(Float.parseFloat(flatLat), Float.parseFloat(flatLng), Float.parseFloat(metroLat), Float.parseFloat(metroLng));
+//		            	if (destantion < findDestantion) {
+//		            		findDestantion = destantion;
+//		            		findMetro      = metroName;
+//		            	}
+//		
+//		            	Log.i("CianTask", "JSON: destantion " + destantion);
+//		
+//			        }
+//				    
+//	
+//		    	}
+//			    
+//			    
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//	
+//	    	DecimalFormat df = new DecimalFormat("##");
+//	    	df.setRoundingMode(RoundingMode.DOWN);
+//
+//	    	Log.i("CianTask", "JSON: metro  " + findMetro + " (" + df.format(findDestantion) + "m)");
+//
+//	    	return "".equals(findMetro) ? "Метро не найдено" : (findMetro + " (" + df.format(findDestantion) + "m)");
+//        }
+//	    
+//	    return null;
+//	}
 
 }
 

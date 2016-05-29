@@ -8,40 +8,42 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.SharedPreferences;
 import android.util.Log;
 
 public class Search {
 
-		protected List<String> shapes;
-		private List<String> objects;
-		
-		protected List<String> getObjects() {
-			return objects;
-		}
+		protected List<Shape> shapes;
+		protected List<Metro> metro;
 		
 		public Search() {
-			this(getMetroShapes());
+			// Metro
+			shapes = getMetroShapes();
+			// CAO
+			shapes.add(new Shape("55.7399_37.5389,55.7522_37.5324,55.7681_37.5344,55.7743_37.5516,55.7860_37.5633,55.7916_37.5760,55.7903_37.6385,55.7945_37.6577,55.7853_37.6797,55.7797_37.7040,55.7656_37.7095,55.7495_37.7147,55.7381_37.7013,55.7289_37.6817,55.7179_37.6606,55.7057_37.6671,55.6974_37.6555,55.6995_37.6333,55.6858_37.6299,55.6848_37.6095,55.7055_37.5944,55.7206_37.5588,55.7357_37.5396", "Охотный ряд (ЦАО)", new Coordinate((double) 37.615327, (double) 55.756523)));
+			// Yaroslavka
+			shapes.add(new Shape("55.8788_37.7095,55.8850_37.7184,55.8830_37.7220,55.8808_37.7233,55.8810_37.7253,55.8805_37.7282,55.8777_37.7333,55.8759_37.7314,55.8753_37.7310,55.8737_37.7260,55.8732_37.7233,55.8785_37.7099", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8791_37.7091,55.8730_37.7237,55.8723_37.7190,55.8700_37.7158,55.8683_37.7134,55.8731_37.7003,55.8787_37.7086", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8735_37.7001,55.8683_37.7139,55.8653_37.7080,55.8636_37.7059,55.8626_37.7029,55.8621_37.7019,55.8670_37.6925,55.8733_37.6998", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8675_37.6922,55.8620_37.7022,55.8613_37.7017,55.8614_37.7060,55.8605_37.7181,55.8528_37.7215,55.8502_37.7199,55.8470_37.7138,55.8482_37.7046,55.8502_37.7009,55.8538_37.7011,55.8605_37.6917,55.8636_37.6856,55.8673_37.6916", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8639_37.6855,55.8607_37.6917,55.8539_37.7014,55.8503_37.7013,55.8490_37.7010,55.8477_37.6962,55.8516_37.6933,55.8487_37.6910,55.8519_37.6834,55.8562_37.6885,55.8601_37.6798,55.8637_37.6849", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8604_37.6796,55.8563_37.6888,55.8519_37.6840,55.8486_37.6913,55.8442_37.6834,55.8487_37.6737,55.8546_37.6819,55.8569_37.6754,55.8601_37.6793", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8572_37.6752,55.8546_37.6822,55.8479_37.6729,55.8473_37.6717,55.8533_37.6724,55.8569_37.6750", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8474_37.6712,55.8490_37.6736,55.8441_37.6837,55.8417_37.6796,55.8396_37.6778,55.8387_37.6765,55.8382_37.6718,55.8405_37.6631,55.8446_37.6506,55.8456_37.6502,55.8471_37.6508,55.8475_37.6601,55.8508_37.6580,55.8538_37.6661,55.8508_37.6709,55.8487_37.6712", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8450_37.6498,55.8380_37.6729,55.8250_37.6708,55.8253_37.6657,55.8300_37.6506,55.8333_37.6540,55.8400_37.6474,55.8443_37.6496", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401)));
+			shapes.add(new Shape("55.8405_37.6470,55.8338_37.6544,55.8300_37.6515,55.8257_37.6658,55.8245_37.6700,55.8209_37.6686,55.8199_37.6681,55.8272_37.6451,55.8278_37.6437,55.8300_37.6460,55.8333_37.6364,55.8403_37.6363,55.8405_37.6457", "ВДНХ (Ярославское шоссе)", new Coordinate((double) 37.641090, (double) 55.821401))); 
+
 		}
 
-		public Search(LinkedList<String> polygons) {
+		public Search(LinkedList<Shape> polygons) {
 			this.shapes = polygons;
-			// CAO
-			shapes.add("55.7399_37.5389,55.7522_37.5324,55.7681_37.5344,55.7743_37.5516,55.7860_37.5633,55.7916_37.5760,55.7903_37.6385,55.7945_37.6577,55.7853_37.6797,55.7797_37.7040,55.7656_37.7095,55.7495_37.7147,55.7381_37.7013,55.7289_37.6817,55.7179_37.6606,55.7057_37.6671,55.6974_37.6555,55.6995_37.6333,55.6858_37.6299,55.6848_37.6095,55.7055_37.5944,55.7206_37.5588,55.7357_37.5396");
-			// Yaroslavka
-			shapes.add("55.8788_37.7095,55.8850_37.7184,55.8830_37.7220,55.8808_37.7233,55.8810_37.7253,55.8805_37.7282,55.8777_37.7333,55.8759_37.7314,55.8753_37.7310,55.8737_37.7260,55.8732_37.7233,55.8785_37.7099");
-			shapes.add("55.8791_37.7091,55.8730_37.7237,55.8723_37.7190,55.8700_37.7158,55.8683_37.7134,55.8731_37.7003,55.8787_37.7086");
-			shapes.add("55.8735_37.7001,55.8683_37.7139,55.8653_37.7080,55.8636_37.7059,55.8626_37.7029,55.8621_37.7019,55.8670_37.6925,55.8733_37.6998");
-			shapes.add("55.8675_37.6922,55.8620_37.7022,55.8613_37.7017,55.8614_37.7060,55.8605_37.7181,55.8528_37.7215,55.8502_37.7199,55.8470_37.7138,55.8482_37.7046,55.8502_37.7009,55.8538_37.7011,55.8605_37.6917,55.8636_37.6856,55.8673_37.6916");
-			shapes.add("55.8639_37.6855,55.8607_37.6917,55.8539_37.7014,55.8503_37.7013,55.8490_37.7010,55.8477_37.6962,55.8516_37.6933,55.8487_37.6910,55.8519_37.6834,55.8562_37.6885,55.8601_37.6798,55.8637_37.6849");
-			shapes.add("55.8604_37.6796,55.8563_37.6888,55.8519_37.6840,55.8486_37.6913,55.8442_37.6834,55.8487_37.6737,55.8546_37.6819,55.8569_37.6754,55.8601_37.6793");
-			shapes.add("55.8572_37.6752,55.8546_37.6822,55.8479_37.6729,55.8473_37.6717,55.8533_37.6724,55.8569_37.6750");
-			shapes.add("55.8474_37.6712,55.8490_37.6736,55.8441_37.6837,55.8417_37.6796,55.8396_37.6778,55.8387_37.6765,55.8382_37.6718,55.8405_37.6631,55.8446_37.6506,55.8456_37.6502,55.8471_37.6508,55.8475_37.6601,55.8508_37.6580,55.8538_37.6661,55.8508_37.6709,55.8487_37.6712");
-			shapes.add("55.8450_37.6498,55.8380_37.6729,55.8250_37.6708,55.8253_37.6657,55.8300_37.6506,55.8333_37.6540,55.8400_37.6474,55.8443_37.6496");
-			shapes.add("55.8405_37.6470,55.8338_37.6544,55.8300_37.6515,55.8257_37.6658,55.8245_37.6700,55.8209_37.6686,55.8199_37.6681,55.8272_37.6451,55.8278_37.6437,55.8300_37.6460,55.8333_37.6364,55.8403_37.6363,55.8405_37.6457"); 
-
-
 		}
 
 
@@ -51,205 +53,205 @@ public class Search {
 		}
 
 
-		private static LinkedList<String> getMetroShapes(){
+		private LinkedList<Shape> getMetroShapes(){
 				
-				LinkedList<Coordinate> metro = new LinkedList<Coordinate>();
+				metro = new LinkedList<Metro>();
 				
-				metro.add(new Coordinate((double) 37.716621, (double) 55.751432)); //Авиамоторная
-		///		metro.add(new Coordinate((double) 37.657008, (double) 55.706634)); //Автозаводская
-				metro.add(new Coordinate((double) 37.573339, (double) 55.687660)); //Академическая
-		///		metro.add(new Coordinate((double) 37.609308, (double) 55.752075)); //Александровский сад
-//				metro.add(new Coordinate((double) 37.638737, (double) 55.807800)); //Алексеевская
-//				metro.add(new Coordinate((double) 37.765678, (double) 55.633490)); //Алма//Атинская
-				metro.add(new Coordinate((double) 37.587344, (double) 55.898376)); //Алтуфьево
-//				metro.add(new Coordinate((double) 37.596812, (double) 55.583657)); //Аннино
-		///		metro.add(new Coordinate((double) 37.604116, (double) 55.752516)); //Арбатская
-		///		metro.add(new Coordinate((double) 37.601519, (double) 55.752131)); //Арбатская
-				metro.add(new Coordinate((double) 37.532870, (double) 55.800261)); //Аэропорт
-				metro.add(new Coordinate((double) 37.664581, (double) 55.869794)); //Бабушкинская
-				metro.add(new Coordinate((double) 37.497863, (double) 55.743801)); //Багратионовская
-		///		metro.add(new Coordinate((double) 37.581280, (double) 55.760818)); //Баррикадная
-		///		metro.add(new Coordinate((double) 37.679035, (double) 55.772406)); //Бауманская
-				metro.add(new Coordinate((double) 37.545518, (double) 55.773505)); //Беговая
-		///		metro.add(new Coordinate((double) 37.586194, (double) 55.777170)); //Белорусская
-		///		metro.add(new Coordinate((double) 37.582107, (double) 55.777439)); //Белорусская
-				metro.add(new Coordinate((double) 37.526115, (double) 55.642357)); //Беляево
-				metro.add(new Coordinate((double) 37.603011, (double) 55.883868)); //Бибирево
-		///		metro.add(new Coordinate((double) 37.611482, (double) 55.752501)); //Библиотека имени Ленина
-//				metro.add(new Coordinate((double) 37.555328, (double) 55.601188)); //Битцевский парк
-//				metro.add(new Coordinate((double) 37.743831, (double) 55.633587)); //Борисово
-//				metro.add(new Coordinate((double) 37.609254, (double) 55.750454)); //Боровицкая
-				metro.add(new Coordinate((double) 37.637811, (double) 55.844597)); //Ботанический сад
-//				metro.add(new Coordinate((double) 37.750514, (double) 55.659460)); //Братиславская
-//				metro.add(new Coordinate((double) 37.542329, (double) 55.545207)); //Бульвар адмирала Ушакова
-//				metro.add(new Coordinate((double) 37.577346, (double) 55.569667)); //Бульвар Дмитрия Донского
-				metro.add(new Coordinate((double) 37.735117, (double) 55.814264)); //Бульвар Рокоссовского
-//				metro.add(new Coordinate((double) 37.515919, (double) 55.537964)); //Бунинская аллея
-				metro.add(new Coordinate((double) 37.619522, (double) 55.653294)); //Варшавская
-				metro.add(new Coordinate((double) 37.641090, (double) 55.821401)); //ВДНХ
-				metro.add(new Coordinate((double) 37.590282, (double) 55.847922)); //Владыкино
-				metro.add(new Coordinate((double) 37.486616, (double) 55.840209)); //Водный стадион
-				metro.add(new Coordinate((double) 37.497791, (double) 55.818923)); //Войковская
-				metro.add(new Coordinate((double) 37.687102, (double) 55.724900)); //Волгоградский проспект
-//				metro.add(new Coordinate((double) 37.754314, (double) 55.690446)); //Волжская
-//				metro.add(new Coordinate((double) 37.382034, (double) 55.835508)); //Волоколамская
-				metro.add(new Coordinate((double) 37.559317, (double) 55.710438)); //Воробьёвы горы
-		///		metro.add(new Coordinate((double) 37.543021, (double) 55.749547)); //Выставочная
-//				metro.add(new Coordinate((double) 37.817969, (double) 55.715682)); //Выхино
-		///		metro.add(new Coordinate((double) 37.542671, (double) 55.748843)); //Деловой центр
-				metro.add(new Coordinate((double) 37.558212, (double) 55.789704)); //Динамо
-				metro.add(new Coordinate((double) 37.580831, (double) 55.807881)); //Дмитровская
-		///		metro.add(new Coordinate((double) 37.622711, (double) 55.729012)); //Добрынинская
-				metro.add(new Coordinate((double) 37.717905, (double) 55.610697)); //Домодедовская
-		///		metro.add(new Coordinate((double) 37.614716, (double) 55.781484)); //Достоевская
-				metro.add(new Coordinate((double) 37.676259, (double) 55.718070)); //Дубровка
-//				metro.add(new Coordinate((double) 37.855123, (double) 55.684539)); //Жулебино
-//				metro.add(new Coordinate((double) 37.745205, (double) 55.612329)); //Зябликово
-				metro.add(new Coordinate((double) 37.781380, (double) 55.787746)); //Измайловская
-				metro.add(new Coordinate((double) 37.540075, (double) 55.656682)); //Калужская
-				metro.add(new Coordinate((double) 37.656218, (double) 55.636107)); //Кантемировская
-//				metro.add(new Coordinate((double) 37.598232, (double) 55.653177)); //Каховская
-				metro.add(new Coordinate((double) 37.649256, (double) 55.655432)); //Каширская
-				metro.add(new Coordinate((double) 37.649256, (double) 55.655432)); //Каширская
-		///		metro.add(new Coordinate((double) 37.567545, (double) 55.744596)); //Киевская
-		///		metro.add(new Coordinate((double) 37.566449, (double) 55.744075)); //Киевская
-		///		metro.add(new Coordinate((double) 37.564132, (double) 55.743117)); //Киевская
-//				metro.add(new Coordinate((double) 37.631326, (double) 55.756498)); //Китай//город
-//				metro.add(new Coordinate((double) 37.633877, (double) 55.754360)); //Китай//город
-//				metro.add(new Coordinate((double) 37.685710, (double) 55.706320)); //Кожуховская
-				metro.add(new Coordinate((double) 37.663719, (double) 55.677423)); //Коломенская
-		///		metro.add(new Coordinate((double) 37.654772, (double) 55.775672)); //Комсомольская
-		///		metro.add(new Coordinate((double) 37.654565, (double) 55.774072)); //Комсомольская
-				metro.add(new Coordinate((double) 37.520024, (double) 55.633658)); //Коньково
-//				metro.add(new Coordinate((double) 37.746355, (double) 55.613717)); //Красногвардейская
-		///		metro.add(new Coordinate((double) 37.577211, (double) 55.760211)); //Краснопресненская
-		///		metro.add(new Coordinate((double) 37.666072, (double) 55.779849)); //Красносельская
-		///		metro.add(new Coordinate((double) 37.648888, (double) 55.768795)); //Красные ворота
-		///		metro.add(new Coordinate((double) 37.664788, (double) 55.732464)); //Крестьянская застава
-		///		metro.add(new Coordinate((double) 37.603487, (double) 55.745068)); //Кропоткинская
-				metro.add(new Coordinate((double) 37.408139, (double) 55.756842)); //Крылатское
-		///		metro.add(new Coordinate((double) 37.623780, (double) 55.761598)); //Кузнецкий мост
-//				metro.add(new Coordinate((double) 37.765902, (double) 55.705417)); //Кузьминки
-//				metro.add(new Coordinate((double) 37.446874, (double) 55.730877)); //Кунцевская
-				metro.add(new Coordinate((double) 37.445123, (double) 55.730634)); //Кунцевская
-		///		metro.add(new Coordinate((double) 37.660287, (double) 55.758463)); //Курская
-		///		metro.add(new Coordinate((double) 37.659155, (double) 55.758640)); //Курская
-				metro.add(new Coordinate((double) 37.534236, (double) 55.740178)); //Кутузовская
-				metro.add(new Coordinate((double) 37.586239, (double) 55.707689)); //Ленинский проспект
-//				metro.add(new Coordinate((double) 37.852275, (double) 55.701765)); //Лермонтовский проспект
-//				metro.add(new Coordinate((double) 37.577310, (double) 55.581968)); //Лесопарковая
-		///		metro.add(new Coordinate((double) 37.627346, (double) 55.759162)); //Лубянка
-//				metro.add(new Coordinate((double) 37.762003, (double) 55.676265)); //Люблино
-		///		metro.add(new Coordinate((double) 37.656802, (double) 55.740993)); //Марксистская
-				metro.add(new Coordinate((double) 37.616180, (double) 55.793723)); //Марьина роща
-//				metro.add(new Coordinate((double) 37.744118, (double) 55.649368)); //Марьино
-		///		metro.add(new Coordinate((double) 37.596192, (double) 55.769808)); //Маяковская
-				metro.add(new Coordinate((double) 37.661527, (double) 55.887473)); //Медведково
-				metro.add(new Coordinate((double) 37.533041, (double) 55.748640)); //Международная
-		///		metro.add(new Coordinate((double) 37.598735, (double) 55.781788)); //Менделеевская
-				metro.add(new Coordinate((double) 37.361220, (double) 55.846098)); //Митино
-				metro.add(new Coordinate((double) 37.416386, (double) 55.741004)); //Молодёжная
-//				metro.add(new Coordinate((double) 37.384747, (double) 55.823990)); //Мякинино
-				metro.add(new Coordinate((double) 37.623061, (double) 55.683676)); //Нагатинская
-				metro.add(new Coordinate((double) 37.610745, (double) 55.672854)); //Нагорная
-				metro.add(new Coordinate((double) 37.605274, (double) 55.662379)); //Нахимовский проспект
-//				metro.add(new Coordinate((double) 37.817295, (double) 55.751675)); //Новогиреево
-//				metro.add(new Coordinate((double) 37.864052, (double) 55.745113)); //Новокосино
-		///		metro.add(new Coordinate((double) 37.629125, (double) 55.742276)); //Новокузнецкая
-		///		metro.add(new Coordinate((double) 37.601421, (double) 55.779565)); //Новослободская
-//				metro.add(new Coordinate((double) 37.553442, (double) 55.601833)); //Новоясеневская
-				metro.add(new Coordinate((double) 37.554493, (double) 55.670077)); //Новые Черёмушки
-		///		metro.add(new Coordinate((double) 37.612766, (double) 55.731257)); //Октябрьская
-		///		metro.add(new Coordinate((double) 37.610979, (double) 55.729255)); //Октябрьская
-				metro.add(new Coordinate((double) 37.493317, (double) 55.793581)); //Октябрьское поле
-				metro.add(new Coordinate((double) 37.695214, (double) 55.612690)); //Орехово
-				metro.add(new Coordinate((double) 37.604843, (double) 55.863384)); //Отрадное
-		///		metro.add(new Coordinate((double) 37.615327, (double) 55.756523)); //Охотный ряд
-		///		metro.add(new Coordinate((double) 37.636329, (double) 55.731536)); //Павелецкая
-		///		metro.add(new Coordinate((double) 37.638961, (double) 55.729787)); //Павелецкая
-		///		metro.add(new Coordinate((double) 37.595061, (double) 55.736077)); //Парк культуры
-		///		metro.add(new Coordinate((double) 37.592905, (double) 55.735150)); //Парк культуры
-		///		metro.add(new Coordinate((double) 37.516925, (double) 55.736164)); //Парк Победы
-				metro.add(new Coordinate((double) 37.514401, (double) 55.736478)); //Парк Победы
-				metro.add(new Coordinate((double) 37.749265, (double) 55.788424)); //Партизанская
-				metro.add(new Coordinate((double) 37.799364, (double) 55.794376)); //Первомайская
-				metro.add(new Coordinate((double) 37.786887, (double) 55.751320)); //Перово
-				metro.add(new Coordinate((double) 37.575558, (double) 55.836524)); //Петровско//Разумовская
-//				metro.add(new Coordinate((double) 37.728398, (double) 55.692972)); //Печатники
-				metro.add(new Coordinate((double) 37.467078, (double) 55.735986)); //Пионерская
-				metro.add(new Coordinate((double) 37.436382, (double) 55.860529)); //Планерная
-		///		metro.add(new Coordinate((double) 37.680589, (double) 55.747024)); //Площадь Ильича
-		///		metro.add(new Coordinate((double) 37.622360, (double) 55.756741)); //Площадь Революции
-				metro.add(new Coordinate((double) 37.517895, (double) 55.777201)); //Полежаевская
-//				metro.add(new Coordinate((double) 37.618471, (double) 55.736807)); //Полянка
-//				metro.add(new Coordinate((double) 37.603972, (double) 55.611577)); //Пражская
-				metro.add(new Coordinate((double) 37.715022, (double) 55.796167)); //Преображенская площадь
-		///		metro.add(new Coordinate((double) 37.666917, (double) 55.731546)); //Пролетарская
-				metro.add(new Coordinate((double) 37.505831, (double) 55.676910)); //Проспект Вернадского
-		///		metro.add(new Coordinate((double) 37.633482, (double) 55.781757)); //Проспект Мира
-		///		metro.add(new Coordinate((double) 37.633464, (double) 55.779631)); //Проспект Мира
-				metro.add(new Coordinate((double) 37.562595, (double) 55.677671)); //Профсоюзная
-		///		metro.add(new Coordinate((double) 37.603900, (double) 55.765747)); //Пушкинская
-				metro.add(new Coordinate((double) 37.354025, (double) 55.855644)); //Пятницкое шоссе
-				metro.add(new Coordinate((double) 37.476231, (double) 55.854891)); //Речной вокзал
-				metro.add(new Coordinate((double) 37.636123, (double) 55.792513)); //Рижская
-		///		metro.add(new Coordinate((double) 37.681254, (double) 55.746228)); //Римская
-//				metro.add(new Coordinate((double) 37.793606, (double) 55.717366)); //Рязанский проспект
-				metro.add(new Coordinate((double) 37.588296, (double) 55.793313)); //Савёловская
-				metro.add(new Coordinate((double) 37.653379, (double) 55.855558)); //Свиблово
-				metro.add(new Coordinate((double) 37.598384, (double) 55.651552)); //Севастопольская
-				metro.add(new Coordinate((double) 37.719423, (double) 55.783195)); //Семёновская
-		///		metro.add(new Coordinate((double) 37.625199, (double) 55.726680)); //Серпуховская
-				metro.add(new Coordinate((double) 37.472171, (double) 55.729828)); //Славянский бульвар
-		///		metro.add(new Coordinate((double) 37.581658, (double) 55.749060)); //Смоленская
-		///		metro.add(new Coordinate((double) 37.583841, (double) 55.747642)); //Смоленская
-				metro.add(new Coordinate((double) 37.514787, (double) 55.805042)); //Сокол
-				metro.add(new Coordinate((double) 37.679700, (double) 55.789198)); //Сокольники
-				metro.add(new Coordinate((double) 37.434801, (double) 55.817234)); //Спартак
-		///		metro.add(new Coordinate((double) 37.562227, (double) 55.722761)); //Спортивная
-//				metro.add(new Coordinate((double) 37.636374, (double) 55.766299)); //Сретенский бульвар
-				metro.add(new Coordinate((double) 37.403118, (double) 55.803691)); //Строгино
-		///		metro.add(new Coordinate((double) 37.548375, (double) 55.738784)); //Студенческая
-		///		metro.add(new Coordinate((double) 37.632332, (double) 55.772315)); //Сухаревская
-				metro.add(new Coordinate((double) 37.439787, (double) 55.850510)); //Сходненская
-		///		metro.add(new Coordinate((double) 37.653146, (double) 55.742433)); //Таганская
-		///		metro.add(new Coordinate((double) 37.653613, (double) 55.739199)); //Таганская
-		///		metro.add(new Coordinate((double) 37.605939, (double) 55.764455)); //Тверская
-		///		metro.add(new Coordinate((double) 37.617680, (double) 55.758808)); //Театральная
-//				metro.add(new Coordinate((double) 37.732117, (double) 55.709211)); //Текстильщики
-//				metro.add(new Coordinate((double) 37.505912, (double) 55.618730)); //Тёплый Стан
-				metro.add(new Coordinate((double) 37.574498, (double) 55.818660)); //Тимирязевская
-		///		metro.add(new Coordinate((double) 37.626142, (double) 55.741125)); //Третьяковская
-		///		metro.add(new Coordinate((double) 37.625981, (double) 55.740319)); //Третьяковская
-		///		metro.add(new Coordinate((double) 37.621902, (double) 55.767939)); //Трубная
-		///		metro.add(new Coordinate((double) 37.622612, (double) 55.708841)); //Тульская
-		///		metro.add(new Coordinate((double) 37.636742, (double) 55.765276)); //Тургеневская
-				metro.add(new Coordinate((double) 37.437604, (double) 55.827080)); //Тушинская
-		///		metro.add(new Coordinate((double) 37.561419, (double) 55.764273)); //Улица 1905 года
-//				metro.add(new Coordinate((double) 37.600675, (double) 55.595883)); //Улица академика Янгеля
-//				metro.add(new Coordinate((double) 37.531226, (double) 55.541825)); //Улица Горчакова
-//				metro.add(new Coordinate((double) 37.554618, (double) 55.548034)); //Улица Скобелевская
-//				metro.add(new Coordinate((double) 37.576708, (double) 55.568838)); //Улица Старокачаловская
-				metro.add(new Coordinate((double) 37.534532, (double) 55.692440)); //Университет
-				metro.add(new Coordinate((double) 37.483328, (double) 55.739519)); //Филёвский парк
-				metro.add(new Coordinate((double) 37.514949, (double) 55.745970)); //Фили
-		///		metro.add(new Coordinate((double) 37.580328, (double) 55.727232)); //Фрунзенская
-				metro.add(new Coordinate((double) 37.669612, (double) 55.620982)); //Царицыно
-		///		metro.add(new Coordinate((double) 37.620986, (double) 55.771616)); //Цветной бульвар
-				metro.add(new Coordinate((double) 37.744819, (double) 55.802988)); //Черкизовская
-				metro.add(new Coordinate((double) 37.606065, (double) 55.640538)); //Чертановская
-		///		metro.add(new Coordinate((double) 37.608167, (double) 55.765843)); //Чеховская
-		///		metro.add(new Coordinate((double) 37.638683, (double) 55.764794)); //Чистые пруды
-		///		metro.add(new Coordinate((double) 37.659263, (double) 55.755930)); //Чкаловская
-		///		metro.add(new Coordinate((double) 37.607799, (double) 55.718821)); //Шаболовская
-//				metro.add(new Coordinate((double) 37.743723, (double) 55.620982)); //Шипиловская
-				metro.add(new Coordinate((double) 37.751583, (double) 55.758255)); //Шоссе Энтузиастов
-//				metro.add(new Coordinate((double) 37.798556, (double) 55.810228)); //Щёлковская
-				metro.add(new Coordinate((double) 37.463772, (double) 55.808827)); //Щукинская
-				metro.add(new Coordinate((double) 37.705284, (double) 55.782066)); //Электрозаводская
-				metro.add(new Coordinate((double) 37.482852, (double) 55.663146)); //Юго//Западная
-				metro.add(new Coordinate((double) 37.609047, (double) 55.622436)); //Южная
-//				metro.add(new Coordinate((double) 37.533400, (double) 55.606182)); //Ясенево
+				metro.add(new Metro("Авиамоторная", new Coordinate((double) 37.716621, (double) 55.751432)));
+		///		metro.add(new Metro("Автозаводская", new Coordinate((double) 37.657008, (double) 55.706634)));
+				metro.add(new Metro("Академическая", new Coordinate((double) 37.573339, (double) 55.687660)));
+		///		metro.add(new Metro("Александровский сад", new Coordinate((double) 37.609308, (double) 55.752075)));
+//				metro.add(new Metro("Алексеевская", new Coordinate((double) 37.638737, (double) 55.807800)));
+//				metro.add(new Metro("Алма//Атинская", new Coordinate((double) 37.765678, (double) 55.633490)));
+				metro.add(new Metro("Алтуфьево", new Coordinate((double) 37.587344, (double) 55.898376)));
+//				metro.add(new Metro("Аннино", new Coordinate((double) 37.596812, (double) 55.583657)));
+		///		metro.add(new Metro("Арбатская", new Coordinate((double) 37.604116, (double) 55.752516)));
+		///		metro.add(new Metro("Арбатская", new Coordinate((double) 37.601519, (double) 55.752131)));
+				metro.add(new Metro("Аэропорт", new Coordinate((double) 37.532870, (double) 55.800261)));
+				metro.add(new Metro("Бабушкинская", new Coordinate((double) 37.664581, (double) 55.869794)));
+				metro.add(new Metro("Багратионовская", new Coordinate((double) 37.497863, (double) 55.743801)));
+		///		metro.add(new Metro("Баррикадная", new Coordinate((double) 37.581280, (double) 55.760818)));
+		///		metro.add(new Metro("Бауманская", new Coordinate((double) 37.679035, (double) 55.772406)));
+				metro.add(new Metro("Беговая", new Coordinate((double) 37.545518, (double) 55.773505)));
+		///		metro.add(new Metro("Белорусская", new Coordinate((double) 37.586194, (double) 55.777170)));
+		///		metro.add(new Metro("Белорусская", new Coordinate((double) 37.582107, (double) 55.777439)));
+				metro.add(new Metro("Беляево", new Coordinate((double) 37.526115, (double) 55.642357)));
+				metro.add(new Metro("Бибирево", new Coordinate((double) 37.603011, (double) 55.883868)));
+		///		metro.add(new Metro("Библиотека имени Ленина", new Coordinate((double) 37.611482, (double) 55.752501)));
+//				metro.add(new Metro("Битцевский парк", new Coordinate((double) 37.555328, (double) 55.601188)));
+//				metro.add(new Metro("Борисово", new Coordinate((double) 37.743831, (double) 55.633587)));
+//				metro.add(new Metro("Боровицкая", new Coordinate((double) 37.609254, (double) 55.750454)));
+				metro.add(new Metro("Ботанический сад", new Coordinate((double) 37.637811, (double) 55.844597)));
+//				metro.add(new Metro("Братиславская", new Coordinate((double) 37.750514, (double) 55.659460)));
+//				metro.add(new Metro("Бульвар адмирала Ушакова", new Coordinate((double) 37.542329, (double) 55.545207)));
+//				metro.add(new Metro("Бульвар Дмитрия Донского", new Coordinate((double) 37.577346, (double) 55.569667)));
+				metro.add(new Metro("Бульвар Рокоссовского", new Coordinate((double) 37.735117, (double) 55.814264)));
+//				metro.add(new Metro("Бунинская аллея", new Coordinate((double) 37.515919, (double) 55.537964)));
+				metro.add(new Metro("Варшавская", new Coordinate((double) 37.619522, (double) 55.653294)));
+				metro.add(new Metro("ВДНХ", new Coordinate((double) 37.641090, (double) 55.821401)));
+				metro.add(new Metro("Владыкино", new Coordinate((double) 37.590282, (double) 55.847922)));
+				metro.add(new Metro("Водный стадион", new Coordinate((double) 37.486616, (double) 55.840209)));
+				metro.add(new Metro("Войковская", new Coordinate((double) 37.497791, (double) 55.818923)));
+				metro.add(new Metro("Волгоградский проспект", new Coordinate((double) 37.687102, (double) 55.724900)));
+//				metro.add(new Metro("Волжская", new Coordinate((double) 37.754314, (double) 55.690446)));
+//				metro.add(new Metro("Волоколамская", new Coordinate((double) 37.382034, (double) 55.835508)));
+				metro.add(new Metro("Воробьёвы горы", new Coordinate((double) 37.559317, (double) 55.710438)));
+		///		metro.add(new Metro("Выставочная", new Coordinate((double) 37.543021, (double) 55.749547)));
+//				metro.add(new Metro("Выхино", new Coordinate((double) 37.817969, (double) 55.715682)));
+		///		metro.add(new Metro("Деловой центр", new Coordinate((double) 37.542671, (double) 55.748843)));
+				metro.add(new Metro("Динамо", new Coordinate((double) 37.558212, (double) 55.789704)));
+				metro.add(new Metro("Дмитровская", new Coordinate((double) 37.580831, (double) 55.807881)));
+		///		metro.add(new Metro("Добрынинская", new Coordinate((double) 37.622711, (double) 55.729012)));
+				metro.add(new Metro("Домодедовская", new Coordinate((double) 37.717905, (double) 55.610697)));
+		///		metro.add(new Metro("Достоевская", new Coordinate((double) 37.614716, (double) 55.781484)));
+				metro.add(new Metro("Дубровка", new Coordinate((double) 37.676259, (double) 55.718070)));
+//				metro.add(new Metro("Жулебино", new Coordinate((double) 37.855123, (double) 55.684539)));
+//				metro.add(new Metro("Зябликово", new Coordinate((double) 37.745205, (double) 55.612329)));
+				metro.add(new Metro("Измайловская", new Coordinate((double) 37.781380, (double) 55.787746)));
+				metro.add(new Metro("Калужская", new Coordinate((double) 37.540075, (double) 55.656682)));
+				metro.add(new Metro("Кантемировская", new Coordinate((double) 37.656218, (double) 55.636107)));
+//				metro.add(new Metro("Каховская", new Coordinate((double) 37.598232, (double) 55.653177)));
+				metro.add(new Metro("Каширская", new Coordinate((double) 37.649256, (double) 55.655432)));
+				metro.add(new Metro("Каширская", new Coordinate((double) 37.649256, (double) 55.655432)));
+		///		metro.add(new Metro("Киевская", new Coordinate((double) 37.567545, (double) 55.744596)));
+		///		metro.add(new Metro("Киевская", new Coordinate((double) 37.566449, (double) 55.744075)));
+		///		metro.add(new Metro("Киевская", new Coordinate((double) 37.564132, (double) 55.743117)));
+//				metro.add(new Metro("Китай//город", new Coordinate((double) 37.631326, (double) 55.756498)));
+//				metro.add(new Metro("Китай//город", new Coordinate((double) 37.633877, (double) 55.754360)));
+//				metro.add(new Metro("Кожуховская", new Coordinate((double) 37.685710, (double) 55.706320)));
+				metro.add(new Metro("Коломенская", new Coordinate((double) 37.663719, (double) 55.677423)));
+		///		metro.add(new Metro("Комсомольская", new Coordinate((double) 37.654772, (double) 55.775672)));
+		///		metro.add(new Metro("Комсомольская", new Coordinate((double) 37.654565, (double) 55.774072)));
+				metro.add(new Metro("Коньково", new Coordinate((double) 37.520024, (double) 55.633658)));
+//				metro.add(new Metro("Красногвардейская", new Coordinate((double) 37.746355, (double) 55.613717)));
+		///		metro.add(new Metro("Краснопресненская", new Coordinate((double) 37.577211, (double) 55.760211)));
+		///		metro.add(new Metro("Красносельская", new Coordinate((double) 37.666072, (double) 55.779849)));
+		///		metro.add(new Metro("Красные ворота", new Coordinate((double) 37.648888, (double) 55.768795)));
+		///		metro.add(new Metro("Крестьянская застава", new Coordinate((double) 37.664788, (double) 55.732464)));
+		///		metro.add(new Metro("Кропоткинская", new Coordinate((double) 37.603487, (double) 55.745068)));
+				metro.add(new Metro("Крылатское", new Coordinate((double) 37.408139, (double) 55.756842)));
+		///		metro.add(new Metro("Кузнецкий мост", new Coordinate((double) 37.623780, (double) 55.761598)));
+//				metro.add(new Metro("Кузьминки", new Coordinate((double) 37.765902, (double) 55.705417)));
+//				metro.add(new Metro("Кунцевская", new Coordinate((double) 37.446874, (double) 55.730877)));
+				metro.add(new Metro("Кунцевская", new Coordinate((double) 37.445123, (double) 55.730634)));
+		///		metro.add(new Metro("Курская", new Coordinate((double) 37.660287, (double) 55.758463)));
+		///		metro.add(new Metro("Курская", new Coordinate((double) 37.659155, (double) 55.758640)));
+				metro.add(new Metro("Кутузовская", new Coordinate((double) 37.534236, (double) 55.740178)));
+				metro.add(new Metro("Ленинский проспект", new Coordinate((double) 37.586239, (double) 55.707689)));
+//				metro.add(new Metro("Лермонтовский проспект", new Coordinate((double) 37.852275, (double) 55.701765)));
+//				metro.add(new Metro("Лесопарковая", new Coordinate((double) 37.577310, (double) 55.581968)));
+		///		metro.add(new Metro("Лубянка", new Coordinate((double) 37.627346, (double) 55.759162)));
+//				metro.add(new Metro("Люблино", new Coordinate((double) 37.762003, (double) 55.676265)));
+		///		metro.add(new Metro("Марксистская", new Coordinate((double) 37.656802, (double) 55.740993)));
+				metro.add(new Metro("Марьина роща", new Coordinate((double) 37.616180, (double) 55.793723)));
+//				metro.add(new Metro("Марьино", new Coordinate((double) 37.744118, (double) 55.649368)));
+		///		metro.add(new Metro("Маяковская", new Coordinate((double) 37.596192, (double) 55.769808)));
+				metro.add(new Metro("Медведково", new Coordinate((double) 37.661527, (double) 55.887473)));
+				metro.add(new Metro("Международная", new Coordinate((double) 37.533041, (double) 55.748640)));
+		///		metro.add(new Metro("Менделеевская", new Coordinate((double) 37.598735, (double) 55.781788)));
+				metro.add(new Metro("Митино", new Coordinate((double) 37.361220, (double) 55.846098)));
+				metro.add(new Metro("Молодёжная", new Coordinate((double) 37.416386, (double) 55.741004)));
+//				metro.add(new Metro("Мякинино", new Coordinate((double) 37.384747, (double) 55.823990)));
+				metro.add(new Metro("Нагатинская", new Coordinate((double) 37.623061, (double) 55.683676)));
+				metro.add(new Metro("Нагорная", new Coordinate((double) 37.610745, (double) 55.672854)));
+				metro.add(new Metro("Нахимовский проспект", new Coordinate((double) 37.605274, (double) 55.662379)));
+//				metro.add(new Metro("Новогиреево", new Coordinate((double) 37.817295, (double) 55.751675)));
+//				metro.add(new Metro("Новокосино", new Coordinate((double) 37.864052, (double) 55.745113)));
+		///		metro.add(new Metro("Новокузнецкая", new Coordinate((double) 37.629125, (double) 55.742276)));
+		///		metro.add(new Metro("Новослободская", new Coordinate((double) 37.601421, (double) 55.779565)));
+//				metro.add(new Metro("Новоясеневская", new Coordinate((double) 37.553442, (double) 55.601833)));
+				metro.add(new Metro("Новые Черёмушки", new Coordinate((double) 37.554493, (double) 55.670077)));
+		///		metro.add(new Metro("Октябрьская", new Coordinate((double) 37.612766, (double) 55.731257)));
+		///		metro.add(new Metro("Октябрьская", new Coordinate((double) 37.610979, (double) 55.729255)));
+				metro.add(new Metro("Октябрьское поле", new Coordinate((double) 37.493317, (double) 55.793581)));
+				metro.add(new Metro("Орехово", new Coordinate((double) 37.695214, (double) 55.612690)));
+				metro.add(new Metro("Отрадное", new Coordinate((double) 37.604843, (double) 55.863384)));
+		///		metro.add(new Metro("Охотный ряд", new Coordinate((double) 37.615327, (double) 55.756523)));
+		///		metro.add(new Metro("Павелецкая", new Coordinate((double) 37.636329, (double) 55.731536)));
+		///		metro.add(new Metro("Павелецкая", new Coordinate((double) 37.638961, (double) 55.729787)));
+		///		metro.add(new Metro("Парк культуры", new Coordinate((double) 37.595061, (double) 55.736077)));
+		///		metro.add(new Metro("Парк культуры", new Coordinate((double) 37.592905, (double) 55.735150)));
+		///		metro.add(new Metro("Парк Победы", new Coordinate((double) 37.516925, (double) 55.736164)));
+				metro.add(new Metro("Парк Победы", new Coordinate((double) 37.514401, (double) 55.736478)));
+				metro.add(new Metro("Партизанская", new Coordinate((double) 37.749265, (double) 55.788424)));
+				metro.add(new Metro("Первомайская", new Coordinate((double) 37.799364, (double) 55.794376)));
+				metro.add(new Metro("Перово", new Coordinate((double) 37.786887, (double) 55.751320)));
+				metro.add(new Metro("Петровско//Разумовская", new Coordinate((double) 37.575558, (double) 55.836524)));
+//				metro.add(new Metro("Печатники", new Coordinate((double) 37.728398, (double) 55.692972)));
+				metro.add(new Metro("Пионерская", new Coordinate((double) 37.467078, (double) 55.735986)));
+				metro.add(new Metro("Планерная", new Coordinate((double) 37.436382, (double) 55.860529)));
+		///		metro.add(new Metro("Площадь Ильича", new Coordinate((double) 37.680589, (double) 55.747024)));
+		///		metro.add(new Metro("Площадь Революции", new Coordinate((double) 37.622360, (double) 55.756741)));
+				metro.add(new Metro("Полежаевская", new Coordinate((double) 37.517895, (double) 55.777201)));
+//				metro.add(new Metro("Полянка", new Coordinate((double) 37.618471, (double) 55.736807)));
+//				metro.add(new Metro("Пражская", new Coordinate((double) 37.603972, (double) 55.611577)));
+				metro.add(new Metro("Преображенская площадь", new Coordinate((double) 37.715022, (double) 55.796167)));
+		///		metro.add(new Metro("Пролетарская", new Coordinate((double) 37.666917, (double) 55.731546)));
+				metro.add(new Metro("Проспект Вернадского", new Coordinate((double) 37.505831, (double) 55.676910)));
+		///		metro.add(new Metro("Проспект Мира", new Coordinate((double) 37.633482, (double) 55.781757)));
+		///		metro.add(new Metro("Проспект Мира", new Coordinate((double) 37.633464, (double) 55.779631)));
+				metro.add(new Metro("Профсоюзная", new Coordinate((double) 37.562595, (double) 55.677671)));
+		///		metro.add(new Metro("Пушкинская", new Coordinate((double) 37.603900, (double) 55.765747)));
+				metro.add(new Metro("Пятницкое шоссе", new Coordinate((double) 37.354025, (double) 55.855644)));
+				metro.add(new Metro("Речной вокзал", new Coordinate((double) 37.476231, (double) 55.854891)));
+				metro.add(new Metro("Рижская", new Coordinate((double) 37.636123, (double) 55.792513)));
+		///		metro.add(new Metro("Римская", new Coordinate((double) 37.681254, (double) 55.746228)));
+//				metro.add(new Metro("Рязанский проспект", new Coordinate((double) 37.793606, (double) 55.717366)));
+				metro.add(new Metro("Савёловская", new Coordinate((double) 37.588296, (double) 55.793313)));
+				metro.add(new Metro("Свиблово", new Coordinate((double) 37.653379, (double) 55.855558)));
+				metro.add(new Metro("Севастопольская", new Coordinate((double) 37.598384, (double) 55.651552)));
+				metro.add(new Metro("Семёновская", new Coordinate((double) 37.719423, (double) 55.783195)));
+		///		metro.add(new Metro("Серпуховская", new Coordinate((double) 37.625199, (double) 55.726680)));
+				metro.add(new Metro("Славянский бульвар", new Coordinate((double) 37.472171, (double) 55.729828)));
+		///		metro.add(new Metro("Смоленская", new Coordinate((double) 37.581658, (double) 55.749060)));
+		///		metro.add(new Metro("Смоленская", new Coordinate((double) 37.583841, (double) 55.747642)));
+				metro.add(new Metro("Сокол", new Coordinate((double) 37.514787, (double) 55.805042)));
+				metro.add(new Metro("Сокольники", new Coordinate((double) 37.679700, (double) 55.789198)));
+				metro.add(new Metro("Спартак", new Coordinate((double) 37.434801, (double) 55.817234)));
+		///		metro.add(new Metro("Спортивная", new Coordinate((double) 37.562227, (double) 55.722761)));
+//				metro.add(new Metro("Сретенский бульвар", new Coordinate((double) 37.636374, (double) 55.766299)));
+				metro.add(new Metro("Строгино", new Coordinate((double) 37.403118, (double) 55.803691)));
+		///		metro.add(new Metro("Студенческая", new Coordinate((double) 37.548375, (double) 55.738784)));
+		///		metro.add(new Metro("Сухаревская", new Coordinate((double) 37.632332, (double) 55.772315)));
+				metro.add(new Metro("Сходненская", new Coordinate((double) 37.439787, (double) 55.850510)));
+		///		metro.add(new Metro("Таганская", new Coordinate((double) 37.653146, (double) 55.742433)));
+		///		metro.add(new Metro("Таганская", new Coordinate((double) 37.653613, (double) 55.739199)));
+		///		metro.add(new Metro("Тверская", new Coordinate((double) 37.605939, (double) 55.764455)));
+		///		metro.add(new Metro("Театральная", new Coordinate((double) 37.617680, (double) 55.758808)));
+//				metro.add(new Metro("Текстильщики", new Coordinate((double) 37.732117, (double) 55.709211)));
+//				metro.add(new Metro("Тёплый Стан", new Coordinate((double) 37.505912, (double) 55.618730)));
+				metro.add(new Metro("Тимирязевская", new Coordinate((double) 37.574498, (double) 55.818660)));
+		///		metro.add(new Metro("Третьяковская", new Coordinate((double) 37.626142, (double) 55.741125)));
+		///		metro.add(new Metro("Третьяковская", new Coordinate((double) 37.625981, (double) 55.740319)));
+		///		metro.add(new Metro("Трубная", new Coordinate((double) 37.621902, (double) 55.767939)));
+		///		metro.add(new Metro("Тульская", new Coordinate((double) 37.622612, (double) 55.708841)));
+		///		metro.add(new Metro("Тургеневская", new Coordinate((double) 37.636742, (double) 55.765276)));
+				metro.add(new Metro("Тушинская", new Coordinate((double) 37.437604, (double) 55.827080)));
+		///		metro.add(new Metro("Улица 1905 года", new Coordinate((double) 37.561419, (double) 55.764273)));
+//				metro.add(new Metro("Улица академика Янгеля", new Coordinate((double) 37.600675, (double) 55.595883)));
+//				metro.add(new Metro("Улица Горчакова", new Coordinate((double) 37.531226, (double) 55.541825)));
+//				metro.add(new Metro("Улица Скобелевская", new Coordinate((double) 37.554618, (double) 55.548034)));
+//				metro.add(new Metro("Улица Старокачаловская", new Coordinate((double) 37.576708, (double) 55.568838)));
+				metro.add(new Metro("Университет", new Coordinate((double) 37.534532, (double) 55.692440)));
+				metro.add(new Metro("Филёвский парк", new Coordinate((double) 37.483328, (double) 55.739519)));
+				metro.add(new Metro("Фили", new Coordinate((double) 37.514949, (double) 55.745970)));
+		///		metro.add(new Metro("Фрунзенская", new Coordinate((double) 37.580328, (double) 55.727232)));
+				metro.add(new Metro("Царицыно", new Coordinate((double) 37.669612, (double) 55.620982)));
+		///		metro.add(new Metro("Цветной бульвар", new Coordinate((double) 37.620986, (double) 55.771616)));
+				metro.add(new Metro("Черкизовская", new Coordinate((double) 37.744819, (double) 55.802988)));
+				metro.add(new Metro("Чертановская", new Coordinate((double) 37.606065, (double) 55.640538)));
+		///		metro.add(new Metro("Чеховская", new Coordinate((double) 37.608167, (double) 55.765843)));
+		///		metro.add(new Metro("Чистые пруды", new Coordinate((double) 37.638683, (double) 55.764794)));
+		///		metro.add(new Metro("Чкаловская", new Coordinate((double) 37.659263, (double) 55.755930)));
+		///		metro.add(new Metro("Шаболовская", new Coordinate((double) 37.607799, (double) 55.718821)));
+//				metro.add(new Metro("Шипиловская", new Coordinate((double) 37.743723, (double) 55.620982)));
+				metro.add(new Metro("Шоссе Энтузиастов", new Coordinate((double) 37.751583, (double) 55.758255)));
+//				metro.add(new Metro("Щёлковская", new Coordinate((double) 37.798556, (double) 55.810228)));
+				metro.add(new Metro("Щукинская", new Coordinate((double) 37.463772, (double) 55.808827)));
+				metro.add(new Metro("Электрозаводская", new Coordinate((double) 37.705284, (double) 55.782066)));
+				metro.add(new Metro("Югозападная", new Coordinate((double) 37.482852, (double) 55.663146)));
+				metro.add(new Metro("Южная", new Coordinate((double) 37.609047, (double) 55.622436)));
+//				metro.add(new Metro("Ясенево", new Coordinate((double) 37.533400, (double) 55.606182)));
 
 				DecimalFormat dff;
 		        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
@@ -258,20 +260,20 @@ public class Search {
 				dff = new DecimalFormat("##.######", otherSymbols);
 		    	dff.setRoundingMode(RoundingMode.DOWN);
 
-				LinkedList<String> metroShapes = new LinkedList<String>();
-				for (Coordinate metroCoordinate : metro) {
+				LinkedList<Shape> metroShapes = new LinkedList<Shape>();
+				for (Metro metroCoordinate : metro) {
 					String metroShape = "";
 					String comma = "";
-					Log.i("CianTask", "JSON: metro search point " + dff.format(metroCoordinate.getDoubleLon())+","+dff.format(metroCoordinate.getDoubleLat()));
+					Log.i("CianTask", "JSON: metro search point " + dff.format(metroCoordinate.getMetro().getDoubleLon())+","+dff.format(metroCoordinate.getMetro().getDoubleLat()));
 
 					for (Integer i=0; i < 360; i += 360 / 15) {
-						Coordinate radiusCoordinate = calcEndPoint(metroCoordinate, 1200, i);
+						Coordinate radiusCoordinate = calcEndPoint(metroCoordinate.getMetro(), 1200, i);
 
 
 						metroShape += comma + dff.format(radiusCoordinate.getDoubleLat()) + "_" + dff.format(radiusCoordinate.getDoubleLon());
 						comma = ",";
 					}
-					metroShapes.add(metroShape);
+					metroShapes.add(new Shape(metroShape, metroCoordinate.getName(), metroCoordinate.getMetro()));
 					
 				} 
 				
@@ -307,8 +309,62 @@ public class Search {
 
 		      return(gp);
 		  }
+		 public static float distFrom(float lat1, float lng1, float lat2, float lng2) {
+			    double earthRadius = 6371000; //meters
+			    double dLat = Math.toRadians(lat2-lat1);
+			    double dLng = Math.toRadians(lng2-lng1);
+			    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+			               Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+			               Math.sin(dLng/2) * Math.sin(dLng/2);
+			    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+			    float dist = (float) (earthRadius * c);
+
+			    return dist;
+		}
+
+		 public String getClossestStation(String position){
+				DecimalFormat dff;
+		        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+		        otherSymbols.setDecimalSeparator('.');
+
+				dff = new DecimalFormat("##.######", otherSymbols);
+		    	dff.setRoundingMode(RoundingMode.DOWN);
+
+				String positionUri  = position.replace(" ", ",");
+		    	
+		    	Pattern downloadPattern = Pattern.compile("([\\d\\.]+) ([\\d\\.]+)");
+		    	Matcher downloadMatcher = downloadPattern.matcher(position);
+		    	
+	    	    Float findDestantion = null;
+	    	    String findMetro = "";
+		    	
+		    	 
+		    	if (downloadMatcher.find()){
+		    		String flatLat = downloadMatcher.group(1);
+		    	    String flatLng = downloadMatcher.group(2);
+			    	for (Metro metro: this.metro) {
+		            	float destantion = distFrom(Float.parseFloat(flatLat), Float.parseFloat(flatLng),(float) metro.getMetro().getDoubleLat(),(float) metro.getMetro().getDoubleLon());
+		            	if (findDestantion == null || destantion < findDestantion) {
+		            		findDestantion = destantion;
+		            		findMetro      = metro.getName();
+		            	}
+				
+				        Log.i("CianTask", "JSON: destantion " + destantion);
+				
+			    	}
+		    	}
+					    
+			
+		    	DecimalFormat df = new DecimalFormat("##");
+		    	df.setRoundingMode(RoundingMode.DOWN);
+
+		    	Log.i("CianTask", "JSON: metro  " + findMetro + " (" + df.format(findDestantion) + "m)");
+
+		    	return "".equals(findMetro) ? "Метро не найдено" : (findMetro + " (" + df.format(findDestantion) + "m)");
+			}
 
 }
+
 
 
 //shapes.add("55.846410_37.661133,55.867991_37.680016,55.889561_37.683449,55.895529_37.675209,55.897454_37.644310,55.893796_37.641563,55.882629_37.639503,55.861248_37.634010,55.852577_37.634354");
