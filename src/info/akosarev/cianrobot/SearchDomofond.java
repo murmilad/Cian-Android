@@ -126,7 +126,7 @@ public class SearchDomofond extends Search {
 		    			    	flatAddress = "Нет адреса";
 		    			    }
 	
-		                    Pattern flatPattern = Pattern.compile("Этаж:\\s*<span>\\s*([^<]+)\\s*</span>");
+		                    Pattern flatPattern = Pattern.compile("Этаж:\\s*</strong>\\s*([^<]+)\\s*</li>");
 		                    Matcher flatMatcher = flatPattern.matcher(response);
 		                    if (flatMatcher.find()){
 		    			    	flatFlat = flatMatcher.group(1);
