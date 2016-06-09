@@ -14,6 +14,7 @@ import java.net.ProtocolException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,11 +23,17 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 
 
 
 
+
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManagerFactory;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -154,40 +161,66 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
 
 	public String  performPostCall(String requestURL,
             HashMap<String, String> postDataParams) throws IOException {
+        IOException ex = new IOException("Proxy not exist");
 
-        URL url;
         String response = "";
 
-        url = new URL(requestURL);
+        int i;
+        for (i = firstCorrectProxy; i < proxies.size(); i++) {
+        	try {
+        		ProxyIp proxyIp = proxies.get(i);
+        		Proxy  proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp.getIp(), proxyIp.getPort()));
 
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(60000);
-        conn.setConnectTimeout(60000);
-        conn.setRequestMethod("POST");
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
+		        URL url;
+		
+		        url = new URL(requestURL);
+		
+		        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+		
+		        conn.setReadTimeout(60000);
+		        conn.setConnectTimeout(60000);
+		        conn.setRequestMethod("POST");
+		        conn.setDoInput(true);
+		        conn.setDoOutput(true);
+		
+		
+		        OutputStream os = conn.getOutputStream();
+		        BufferedWriter writer = new BufferedWriter(
+		                new OutputStreamWriter(os, "UTF-8"));
+		        writer.write(getPostDataString(postDataParams));
+		
+		        writer.flush();
+		        writer.close();
+		        os.close();
+		        int responseCode=conn.getResponseCode();
+		
+		        if (responseCode == HttpsURLConnection.HTTP_OK) {
+		            String line;
+		            BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		            while ((line=br.readLine()) != null) {
+		                response+=line;
+		            }
+		        } else {
+		        	Log.e("Downloader", "HTTP NOK: " + responseCode);    
+		        	throw new IOException("HTTP NOK: " + responseCode);
+		        }
+		        ex = null;
 
-
-        OutputStream os = conn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, "UTF-8"));
-        writer.write(getPostDataString(postDataParams));
-
-        writer.flush();
-        writer.close();
-        os.close();
-        int responseCode=conn.getResponseCode();
-
-        if (responseCode == HttpsURLConnection.HTTP_OK) {
-            String line;
-            BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            while ((line=br.readLine()) != null) {
-                response+=line;
-            }
-        } else {
-        	Log.e("Downloader", "HTTP NOK: " + responseCode);    
-        	throw new IOException("HTTP NOK: " + responseCode);
-        }
+		        firstCorrectProxy = i;
+		        Log.i("Downloader", "Proxy OK: " + i + " " );
+		        break;
+			} catch (IOException e) {
+				Log.e("Downloader", "Proxy NOK: " + i + " " + e);
+				ex = e;
+			}
+		}
+		
+		if (ex != null ) {
+			if (i == proxies.size()) {
+				updateProxies();
+			}
+			throw ex;
+		}
 
         return response;
     }
@@ -257,6 +290,105 @@ public class SendRequestTask extends AsyncTask<Object, Integer, String> {
     	return response;
     }
 	
+	public String  performPostHTTPSCall(String requestURL, HashMap<String, String> postDataParams) throws IOException {
+
+        String response = "";
+
+        IOException ex = new IOException("Proxy not exist");
+    	
+        int i;
+        for (i = firstCorrectProxy; i < proxies.size(); i++) {
+        	try {
+        		
+        		ProxyIp proxyIp = proxies.get(i);
+        		Proxy  proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp.getIp(), proxyIp.getPort()));
+        		URL url = new URL(requestURL);
+
+//    		   KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//    		   String algorithm = TrustManagerFactory.getDefaultAlgorithm();
+//    		   TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
+//    		   tmf.init(keyStore);
+//
+//    		   SSLContext context = SSLContext.getInstance("TLS");
+//    		   context.init(null, tmf.getTrustManagers(), null);
+
+
+        		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        		conn.setHostnameVerifier(new HostnameVerifier(){
+
+					public boolean verify(String arg0, SSLSession arg1) {
+						return true;
+					}
+        			
+        		});
+        		//conn.setSSLSocketFactory(context.getSocketFactory());
+	            conn.setReadTimeout(10000);
+	            conn.setConnectTimeout(10000);
+
+				conn.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
+				//conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+				//conn.setRequestProperty("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4");
+				conn.setRequestProperty("Connection", "keep-alive");
+				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+//				conn.setRequestProperty("Cookie", "yandexuid=174259741462382619; fuid01=572b11da7c071cda.hQ953A4XBeYRZ8KDeRwRMB9TYbMBbG0eG6tw-PCQqvM0Q5p46pyqli7P-Zw0ZVsaapjylvSGaYTJ4WrSaaXy1mTf3xcSnYIeaDUyaNaFu8-NjSsErMxWNoQkDH9ZAYAf; L=SQ15YnJBU3lRYFBGDEZEBHoGQn1+cwVkLVsAAl8gKh4sCwYZAlsEeQ==.1462440428.12387.378585.253bd79755c001e22f130ea4017dc40a; yandex_login=boxofpandora2008; zm=m-white_bender.flex.webp.css-https%3Awww_zNa-f_5uJcPTYK6A_vgZjL6hOW8%3Al; yandex_gid=213; yabs-frequency=/4/0000000000000000/paMmSAGaPm00/; Session_id=3:1465295701.5.0.1462440428000:KvtrTg:8.0|37638243.0.2|146809.331269.UY8eLXeJAh_s6DRCwsME2FD1Tw0; sessionid2=3:1465295701.5.0.1462440428000:KvtrTg:8.1|37638243.0.2|146809.19187.aokl-30kRd01_VQpMIVWmwPY4Cw; _ym_uid=1465308024460072192; yp=1470216409.ww.1#1481076025.szm.1_00:1920x1200:1855x1091#1777800428.udn.cDpib3hvZnBhbmRvcmEyMDA4#1467803787.ygu.1; _ym_isad=2; uid=1bTMKVdYjg9Hja6+BI6/Ag==; _ym_visorc_2119876=b; subscription_popup_count=1; subscription_popup_shown=1; rgid=587795; offer_map_zoom=14; from=direct");
+				conn.setRequestProperty("Host", "realty.yandex.ru");
+				conn.setRequestProperty("Origin", "https://realty.yandex.ru");
+//				conn.setRequestProperty("Referer", "https://realty.yandex.ru/search?type=SELL&category=APARTMENT&rgid=587795&mapPolygon=55.840446%2C37.547443%3B55.842377%2C37.605293%3B55.81262%2C37.621944%3B55.79821%2C37.577312%3B55.81223%2C37.540234%3B55.827885%2C37.536972%3B55.837643%2C37.542294&roomsTotal=1&roomsTotal=2&priceMin=1000000&priceMax=7600000&kitchenSpaceMin=7&floorMin=2&minFloors=2&bathroomUnit=SEPARATED&balcony=BALCONY&areaMin=50");
+				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.82 Safari/537.36");
+				conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+//				conn.setRequestProperty("X-Retpath-Y", "https://realty.yandex.ru/search?type=SELL&category=APARTMENT&rgid=587795&mapPolygon=55.840446%2C37.547443%3B55.842377%2C37.605293%3B55.81262%2C37.621944%3B55.79821%2C37.577312%3B55.81223%2C37.540234%3B55.827885%2C37.536972%3B55.837643%2C37.542294&roomsTotal=1&roomsTotal=2&priceMin=1000000&priceMax=7600000&kitchenSpaceMin=7&floorMin=2&minFloors=2&bathroomUnit=SEPARATED&balcony=BALCONY&areaMin=50");
+	            
+//	            conn.setRequestProperty("Content-Type", "application/json");
+//	            conn.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
+//	            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+//	            conn.setRequestProperty("X-Retpath-Y", "https://realty.yandex.ru/search?type=SELL&category=APARTMENT&roomsTotal=1&roomsTotal=2&rgid=613432&mapPolygon=53.19703459120693%2C50.12491157714843%3B53.19703459120693%2C50.12491157714843%3B53.19703459120693%2C50.12491157714843%3B53.19703459120693%2C50.12491157714843%3B53.19703459120693%2C50.12491157714843");
+//	            conn.setRequestProperty("Cookie", "yandexuid=1294666691465282710; _ym_uid=1465458425334482641; _ym_isad=2; uid=1bTMKVdZKvBWjhN7BPhzAg==; _ym_visorc_2119876=w; fuid01=5720b5c53ddd3bc4.wNjfINUNJijbjDE090sglgd1BO_ZT7GihbMVsidXsp7rOFYaiXMTxyBfKjILqx6w81wWTqwQ3SHbtAOzXidMO7hJfSHFmM82OEqr3GrZPdoEKcbToLIg3ysAcoRHg4Br; from=direct; rgid=613432");
+	            
+	            conn.setRequestMethod("POST");
+	            conn.setDoInput(true);
+	            conn.setDoOutput(true);
+
+
+	            OutputStream os = conn.getOutputStream();
+	            BufferedWriter writer = new BufferedWriter(
+	                    new OutputStreamWriter(os, "UTF-8"));
+	            writer.write(getPostDataString(postDataParams));
+
+	            writer.flush();
+	            writer.close();
+	            os.close();
+	            int responseCode=conn.getResponseCode();
+
+	            if (responseCode == HttpsURLConnection.HTTP_OK) {
+	                String line;
+	                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	                while ((line=br.readLine()) != null) {
+	                    response+=line;
+	                }
+	            } else {
+	            	Log.e("Downloader", "HTTP NOK: " + responseCode);
+	            	throw new IOException("HTTP NOK: " + responseCode);
+	            }
+
+	            ex = null;
+	            firstCorrectProxy = i;
+		        Log.i("Downloader", "Proxy OK: " + i + " " );
+	            break;
+        	} catch (Exception e) {
+        		Log.e("Downloader", "Proxy NOK: " + i + " " + e);
+        		ex = (IOException) e;
+        	}
+    	}
+
+    	if (ex != null ) {
+    		if (i == proxies.size()) {
+    			updateProxies();
+    		}
+    		throw ex;
+    	}
+
+    	return response;
+    }
 	
 	public String  performGetCall(String requestURL) throws IOException {
 

@@ -117,6 +117,7 @@ public class LookCianTask implements Runnable {
 
 		downloaderService.startForeground(2, notificationProgressBuilder.build());
 
+		SearchYandex yandex     = null;
 		SearchCian cian         = null;
 		SearchDomofond domofond = null;
 
@@ -246,7 +247,12 @@ public class LookCianTask implements Runnable {
     			Set<String> flats = new HashSet<String>();
     			try {
 		
-        			if (cian == null) {
+//        			if (yandex == null) {
+//        				yandex     = new SearchYandex();
+//        			}
+//	    			flats.addAll(yandex.lookForFlats(settings, editor, handler));
+
+	    			if (cian == null) {
         				cian     = new SearchCian();
         			}
 	    			flats.addAll(cian.lookForFlats(settings, editor, handler));
