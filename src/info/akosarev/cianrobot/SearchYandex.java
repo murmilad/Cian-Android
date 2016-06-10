@@ -33,143 +33,133 @@ public class SearchYandex extends Search {
 
 		String generatedUrl = "https://realty.yandex.ru/gate/page/loadBlocks";
 
-		Integer equalCount = 0;
-	    Integer flatCount  = 0;
-	    Integer cianCount  = 0;
-	    Integer pointCount = 0;
 	    
 	    
-	    for (Shape shape :shapes){
-		    try {
-
-		    HashMap<String, String> params = new HashMap<String, String>();
-
-params.put("params[type]", "search");
-params.put("params[params][type]", "SELL");
-params.put("params[params][category]", "APARTMENT");
-params.put("params[params][roomsTotal][]", "1");
-params.put("params[params][roomsTotal][]", "2");
-params.put("params[params][rgid]", "165705");
-params.put("params[params][mapPolygon]", "55.87293,37.69847;55.875244,37.709457;55.868298,37.71495;55.858643,37.69229;55.864433,37.68268");
-params.put("params[params][kitchenSpaceMin]", "7");
-params.put("params[params][floorMin]", "2");
-params.put("params[params][minFloors]", "2");
-params.put("params[params][bathroomUnit]", "SEPARATED");
-params.put("params[params][balcony]", "ANY");
-params.put("params[params][areaMin]", "50");
-params.put("params[blocks][]", "i-map-state");
-params.put("version", "2.0-1050");
-params.put("crc", "y6403154e07ecf141c2c11a82d01ecb39");
-		    
-
-
-		        String response = sender.performPostHTTPSCall(generatedUrl, params);
-		    	
-			    Log.i("CianTask", "JSON: "+shape+" response " + response);
-
-
-			    JSONObject flatsCurrentObject = new JSONObject(response);
-
-			    Log.i("CianTask", "JSON: offers count " + flatsCurrentObject.getJSONObject("data").getInt("offers_count"));
+	    for (Integer rooms = 2; rooms <= 3 ; rooms ++){
+		    for (Shape shape :shapes){
+	
+				    HashMap<String, String> params = new HashMap<String, String>();
+		
+					params.put("params[type]", "map");
+					params.put("params[params][type]", "SELL");
+					params.put("params[params][category]", "APARTMENT");
+					params.put("params[params][roomsTotal][]", rooms.toString());
+					params.put("params[params][rgid]", "165705");
+					params.put("params[params][mapPolygon]", shape.getShape().replaceAll(",", ";").replaceAll("_", ","));
+					params.put("params[params][kitchenSpaceMin]", "7");
+					params.put("params[params][floorMin]", "2");
+					params.put("params[params][bathroomUnit]", "SEPARATED");
+					params.put("params[params][priceMin]", "1000000");
+					params.put("params[params][priceMax]", "8000000");
+					params.put("params[params][areaMin]", "50");
+					params.put("params[blocks][]", "i-map-state");
+					params.put("version", "2.0-1050");
+					params.put("crc", "y6403154e07ecf141c2c11a82d01ecb39");
 			    
-			    if (flatsCurrentObject.getJSONObject("data").getInt("offers_count") > 300) {
-			    	Log.i("CianTask", "JSON: offers "+shape+" count > 300!");
-			    	cianCount += 300;
-			    } else {
-			    	cianCount += flatsCurrentObject.getJSONObject("data").getInt("offers_count");
-			    }
-
-			    String responseStatus = flatsCurrentObject.getString("status");
 	
-			    Log.i("CianTask", "JSON: status" + responseStatus);
-
-			    if (!"ok".equals(responseStatus) && !"toomuch".equals(responseStatus)) {
-			    	throw new IOException("response status: " + responseStatus);
-			    }
 	
-			    for (Iterator<String> pointIterator = flatsCurrentObject.getJSONObject("data").getJSONObject("points").keys(); pointIterator.hasNext();) {
-			    	String pointPosition = pointIterator.next();
+	
+			        String response = sender.performPostHTTPSCall(generatedUrl, params);
 			    	
-			    	JSONObject pointObject = flatsCurrentObject.getJSONObject("data").getJSONObject("points").getJSONObject(pointPosition);
-			    	flatCount++;
-
-//				    try {
-//
-//				    	if (flatsObject.getJSONObject("data").getJSONObject("points").getJSONObject(pointPosition)!= null){
-//				    		equalCount++;
-//				    	}
-//				    } catch (JSONException e) {
-//						e.printStackTrace();
-//					}
-
-			    	JSONArray flatObjects = pointObject.getJSONArray("offers");
-			    	String flatAddress = pointObject.getJSONObject("content").getString("text");
-			    	String clossestStation = null;
-
-			    	if (flatObjects.length() < 50) { //Исключаем новостройки
-					    for (Integer i = 0; i < flatObjects.length(); i++) {
-			
-						    	JSONObject flatObject = (JSONObject) flatObjects.get(i);
-
-						    	HashMap<String, Object> flat = new HashMap<String, Object>();
-
-						    	JSONArray flatData = flatObject.getJSONArray("link_text");
-
-						    	flat.put("flatAddress", flatAddress);
-						    	flat.put("flatId", "cian_" + flatObject.getString("id"));
-						    	flat.put("flatType", flatData.getString(0));
-						    	flat.put("flatArea", flatData.getString(1));
-						    	flat.put("flatPrice", Long.parseLong(flatData.getString(2).replaceAll("р.", "").replaceAll(" ", "")));
-						    	flat.put("flatFlat", flatData.getString(3));
-						    	flat.put("flatUrl", "http://www.cian.ru/sale/flat/" + flatObject.getString("id") + "/");
-						    	flat.put("pointPosition", pointPosition);
-
-						    	pointCount++;
-
-						    	clossestStation = settings.getString("clossestStation" + pointPosition, "");
-						    	Long clossestDestantion = settings.getLong("clossestDestantion" + pointPosition, new Long(0));
-
-					    		if ("".equals(clossestStation)) {
-									Log.i("CianTask", "JSON: look formetro  " + flatAddress + " " + pointPosition );
-						    									    			
-					    			clossestStation = getClossestStation(pointPosition);
-					    	        Pattern destantionPattern = Pattern.compile("(\\d+)m");
-					    	        Matcher destantionMatcher = destantionPattern.matcher(clossestStation);
-
-					    	        if (destantionMatcher.find()){
-					    	        	clossestDestantion = Long.parseLong(destantionMatcher.group(1));
-							    		editor.putString("clossestStation" + pointPosition, clossestStation);
-										editor.putLong("clossestDestantion" + pointPosition, clossestDestantion);
-					    	        } else {
-					    	        	clossestDestantion = (long) 5000;
-					    	        }
-									Log.i("CianTask", "JSON: result  " + clossestStation );
-					    		}
-
-						    	flat.put("clossestStation", clossestStation);
-					    		flat.put("clossestDestantion", clossestDestantion);
-
-					    		handler.check(flat);
-					    		objects.add("cian_" + flatObject.getString("id"));
-					    }
-
-			    	}
-			    	
-			    }
-		    } catch (JSONException e) {
-				throw new IOException("Cant parse result " + e.toString()); 
-			}
-		    try {
-        	    Thread.sleep(1000);
-        	} catch(InterruptedException ex) {
-        		ex.printStackTrace();
-        	}
+				    Log.i("CianTask", "Yandex: "+shape+" response " + response);
+	
+	    	        Pattern flatCheckPattern = Pattern.compile("&quot;i-map-state&quot;:");
+	    	        Matcher flatCheckMatcher = flatCheckPattern.matcher(response);
+	    	        if (!flatCheckMatcher.find()){
+	    	        	throw new IOException("response error: " + response);
+	    	        }
+	
+	    	        Pattern flatPointPattern = Pattern.compile("\\{&quot;id&quot;:&quot;(\\d+)&quot;,&quot;lat&quot;:([\\d\\.]+),&quot;lon&quot;:([\\d\\.]+),&quot;suspicious&quot;:false,&quot;type&quot;:&quot;EXACT&quot;\\}");
+	    	        Matcher flatPointMatcher = flatPointPattern.matcher(response);
+	
+	    	        String clossestStation = null;
+	
+	    	        while (flatPointMatcher.find()){
+	    	        	
+				    	HashMap<String, Object> flat = new HashMap<String, Object>();
+				    	String pointPosition = flatPointMatcher.group(2) +" " +flatPointMatcher.group(3);
+				    			
+				    	String flatUrl         = "https://realty.yandex.ru/offer/" +flatPointMatcher.group(1);
+				    	clossestStation = settings.getString("clossestStation" + pointPosition, "");
+				    	Long clossestDestantion = settings.getLong("clossestDestantion" + pointPosition, new Long(0));
+	
+			    		if ("".equals(clossestStation)) {
+	
+			    			clossestStation = getClossestStation(pointPosition);
+			    	        Pattern destantionPattern = Pattern.compile("(\\d+)m");
+			    	        Matcher destantionMatcher = destantionPattern.matcher(clossestStation);
+	
+			    	        if (destantionMatcher.find()){
+			    	        	clossestDestantion = Long.parseLong(destantionMatcher.group(1));
+					    		editor.putString("clossestStation" + pointPosition, clossestStation);
+								editor.putLong("clossestDestantion" + pointPosition, clossestDestantion);
+			    	        } else {
+			    	        	clossestDestantion = (long) 5000;
+			    	        }
+	
+			    	        Log.i("CianTask", "JSON: result  " + clossestStation );
+			    		}
+	
+				    	flat.put("flatId", "yandex_" + flatPointMatcher.group(1));
+			    		flat.put("flatUrl", flatUrl);
+				    	flat.put("clossestStation", clossestStation);
+			    		flat.put("clossestDestantion", clossestDestantion);
+	
+			    		
+				        response = sender.performGetHTTPSCall(flatUrl);
+				    	
+					    Log.i("CianTask", "Yandex: "+flatUrl+" response " + response);
+	
+	//				    Pattern flatAddressPattern = Pattern.compile("<\\s*div\\s+class\\s*=\\s*\"offer-address__street\"\\s*>\\s*([^<]+)\\s*<\\s*/div\\s*>");
+					    Pattern flatAddressPattern = Pattern.compile("<\\s*div\\s+class\\s*=\\s*\"offer-header\"\\s*>\\s*([^<]+)<");
+		    	        Matcher flatAddressMatcher = flatAddressPattern.matcher(response);
+		    	        if (flatAddressMatcher.find()) {
+		    	        	flat.put("flatAddress", flatAddressMatcher.group(1));
+		    	        }
+				    	
+	
+					    Pattern flatTypePattern = Pattern.compile("Количество\\s*комнат\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+		    	        Matcher flatTypeMatcher = flatTypePattern.matcher(response);
+		    	        if (flatTypeMatcher.find()) {
+		    	        	flat.put("flatType", flatTypeMatcher.group(1) + "-комн. кв");
+		    	        }
+	
+					    Pattern flatAreaPattern = Pattern.compile("Общая\\s*площадь\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+		    	        Matcher flatAreaMatcher = flatAreaPattern.matcher(response);
+		    	        if (flatAreaMatcher.find()) {
+		    	        	flat.put("flatArea", flatAreaMatcher.group(1));
+		    	        }
+				    	
+					    Pattern flatPricePattern = Pattern.compile("class\\s*=\\s*\"offer-header__price\"\\s*>\\s*([^<]+)\\s*<");
+		    	        Matcher flatPriceMatcher = flatPricePattern.matcher(response);
+		    	        if (flatPriceMatcher.find()) {
+		    	        	flat.put("flatPrice", Long.parseLong(flatPriceMatcher.group(1).replaceAll("\\s", "")));
+		    	        	if ((Long)flat.get("flatPrice") > 8000000) {
+		    	        		continue;
+		    	        	}
+		    	        }
+				    	
+					    Pattern flatFlatPattern = Pattern.compile("Этаж\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+		    	        Matcher flatFlatMatcher = flatFlatPattern.matcher(response);
+		    	        if (flatFlatMatcher.find()) {
+		    	        	flat.put("flatFlat", flatFlatMatcher.group(1));
+		    	        }
+		    	        
+		    	        handler.check(flat);
+		    	        
+		    	        objects.add("yandex_" + flatPointMatcher.group(1));
+	
+		    	        try {
+		            	    Thread.sleep(1000);
+		            	} catch(InterruptedException ex) {
+		            		ex.printStackTrace();
+		            	}
+	
+	    	        }
+	
+		    }
 	    }
-
-	    Log.i("CianTask", "JSON: equal count " + equalCount);
-	    Log.i("CianTask", "JSON: flat count " + flatCount);
-	    Log.i("CianTask", "JSON: cian count " + cianCount);
-	    Log.i("CianTask", "operate count " + pointCount);
+			    	
 
 		return objects;
 	}

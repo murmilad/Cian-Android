@@ -247,10 +247,10 @@ public class LookCianTask implements Runnable {
     			Set<String> flats = new HashSet<String>();
     			try {
 		
-//        			if (yandex == null) {
-//        				yandex     = new SearchYandex();
-//        			}
-//	    			flats.addAll(yandex.lookForFlats(settings, editor, handler));
+        			if (yandex == null) {
+        				yandex     = new SearchYandex();
+        			}
+	    			flats.addAll(yandex.lookForFlats(settings, editor, handler));
 
 	    			if (cian == null) {
         				cian     = new SearchCian();
