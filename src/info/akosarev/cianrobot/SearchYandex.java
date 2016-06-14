@@ -41,6 +41,7 @@ public class SearchYandex extends Search {
 				    HashMap<String, String> params = new HashMap<String, String>();
 		
 					params.put("params[type]", "map");
+					params.put("params[params][showSimilar]", "NO");
 					params.put("params[params][type]", "SELL");
 					params.put("params[params][category]", "APARTMENT");
 					params.put("params[params][roomsTotal][]", rooms.toString());
@@ -134,9 +135,6 @@ public class SearchYandex extends Search {
 		    	        Matcher flatPriceMatcher = flatPricePattern.matcher(response);
 		    	        if (flatPriceMatcher.find()) {
 		    	        	flat.put("flatPrice", Long.parseLong(flatPriceMatcher.group(1).replaceAll("\\s", "")));
-		    	        	if ((Long)flat.get("flatPrice") > 8000000) {
-		    	        		continue;
-		    	        	}
 		    	        }
 				    	
 					    Pattern flatFlatPattern = Pattern.compile("Этаж\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
