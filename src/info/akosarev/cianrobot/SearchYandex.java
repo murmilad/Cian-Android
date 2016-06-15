@@ -53,6 +53,7 @@ public class SearchYandex extends Search {
 					params.put("params[params][priceMin]", "1000000");
 					params.put("params[params][priceMax]", "8000000");
 					params.put("params[params][areaMin]", "50");
+					params.put("params[params][areaMax]", "100");
 					params.put("params[blocks][]", "i-map-state");
 					params.put("version", "2.0-1050");
 					params.put("crc", "y6403154e07ecf141c2c11a82d01ecb39");
