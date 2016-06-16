@@ -40,6 +40,27 @@ public class SearchYandex extends Search {
 	
 				    HashMap<String, String> params = new HashMap<String, String>();
 		
+//				    params[type]:map
+//				    params[params][type]:SELL
+//				    params[params][category]:APARTMENT
+//				    params[params][kitchenSpaceMin]:7
+//				    params[params][floorMin]:2
+//				    params[params][bathroomUnit]:SEPARATED
+//				    params[params][showSimilar]:NO
+//				    params[params][rgid]:587795
+//				    params[params][areaMin]:53
+//				    params[params][mapPolygon]:55.862835,37.687225;55.867855,37.694607;55.86472,37.700188;55.860325,37.690575
+//				    params[params][leftLongitude]:37.68224783325189
+//				    params[params][topLatitude]:55.86438530457761
+//				    params[params][rightLongitude]:37.70387716674799
+//				    params[params][bottomLatitude]:55.86411983838263
+//				    params[blocks][]:i-map-state
+//				    params[blocks][]:b-map__control-subscribe
+//				    params[blocks][]:b-page__title
+//				    params[blocks][]:type-switcher
+//				    version:2.0-1063
+//				    crc:yf69065dca3f227b5d4cf8803bb961c4c
+				    
 					params.put("params[type]", "map");
 					params.put("params[params][showSimilar]", "NO");
 					params.put("params[params][type]", "SELL");
@@ -47,13 +68,16 @@ public class SearchYandex extends Search {
 					params.put("params[params][roomsTotal][]", rooms.toString());
 					params.put("params[params][rgid]", "165705");
 					params.put("params[params][mapPolygon]", shape.getShape().replaceAll(",", ";").replaceAll("_", ","));
+					params.put("params[params][leftLongitude]", "37.346361243798526");
+					params.put("params[params][topLatitude]", "55.91597240539901");
+					params.put("params[params][rightLongitude]", "37.86821182973604");
+					params.put("params[params][bottomLatitude]", "55.56502066495763");
 					params.put("params[params][kitchenSpaceMin]", "7");
 					params.put("params[params][floorMin]", "2");
 					params.put("params[params][bathroomUnit]", "SEPARATED");
 					params.put("params[params][priceMin]", "1000000");
 					params.put("params[params][priceMax]", "8000000");
 					params.put("params[params][areaMin]", "50");
-					params.put("params[params][areaMax]", "100");
 					params.put("params[blocks][]", "i-map-state");
 					params.put("version", "2.0-1050");
 					params.put("crc", "y6403154e07ecf141c2c11a82d01ecb39");
