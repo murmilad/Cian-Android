@@ -134,35 +134,40 @@ public class SearchYandex extends Search {
 			    		
 				        response = sender.performGetHTTPSCall(flatUrl);
 				    	
-					    Log.i("CianTask", "Yandex: "+flatUrl+" response " + response);
-	
+
 	//				    Pattern flatAddressPattern = Pattern.compile("<\\s*div\\s+class\\s*=\\s*\"offer-address__street\"\\s*>\\s*([^<]+)\\s*<\\s*/div\\s*>");
-					    Pattern flatAddressPattern = Pattern.compile("<\\s*div\\s+class\\s*=\\s*\"offer-header\"\\s*>\\s*([^<]+)<");
+//					    Pattern flatAddressPattern = Pattern.compile("<\\s*div\\s+class\\s*=\\s*\"offer-header\"\\s*>\\s*([^<]+)<");
+					    Pattern flatAddressPattern = Pattern.compile("offer-card__head-table\"\\s*>\\s*<div\\s*class=\"offer-card__head-row\"\\s*>\\s*<\\s*div\\s*class=\"offer-card__head-cell\\s*offer-card__head-name\"\\s*>\\s*([^<]+)\\s*<\\s*span\\s*class=\"offer-card__area-inner\"\\s*>\\s*([^<]+)\\s*</span>\\s*</div>\\s*<div\\s*class=\"offer-card__head-cell\\s*offer-card__price\">\\s*<span\\s*class=\"offer-card__price-inner\">\\s*([^<]+)\\s*<span\\s*class=\"i-font_face_rub-arial-regular\">\\s*([^<]+)\\s*</span>\\s*</span>\\s*</div>\\s*</div>\\s*<div\\s*class=\"offer-card__head-row\">\\s*<div\\s*class=\"offer-card__head-cell offer-card__address\">\\s*([^<]+)\\s*<");
+					    
 		    	        Matcher flatAddressMatcher = flatAddressPattern.matcher(response);
 		    	        if (flatAddressMatcher.find()) {
-		    	        	flat.put("flatAddress", flatAddressMatcher.group(1));
-		    	        }
+		    	        	flat.put("flatAddress", flatAddressMatcher.group(1) + " " + flatAddressMatcher.group(2) + " " + flatAddressMatcher.group(5));
+		    	        	flat.put("flatPrice", Long.parseLong(((String)flatAddressMatcher.group(3)).replaceAll("\\s", "").replaceAll("&thinsp;","")));
+		    	         }
 				    	
 	
-					    Pattern flatTypePattern = Pattern.compile("Количество\\s*комнат\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+//					    Pattern flatTypePattern = Pattern.compile("Количество\\s*комнат\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+		    	        Pattern flatTypePattern = Pattern.compile("<div\\s*class=\"offer-card__feature\\s*offer-card__feature_name_rooms-total\">\\s*<div\\s*class=\"offer-card__feature-value\">\\s*([^<]+)\\s*</div>\\s*<div\\s*class=\"offer-card__feature-name\">Количество комнат</div>\\s*</div>");
 		    	        Matcher flatTypeMatcher = flatTypePattern.matcher(response);
 		    	        if (flatTypeMatcher.find()) {
 		    	        	flat.put("flatType", flatTypeMatcher.group(1) + "-комн. кв");
 		    	        }
 	
-					    Pattern flatAreaPattern = Pattern.compile("Общая\\s*площадь\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+//					    Pattern flatAreaPattern = Pattern.compile("Общая\\s*площадь\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+		    	        Pattern flatAreaPattern = Pattern.compile("<div\\s*class=\"offer-card__feature offer-card__feature_name_total-area\">\\s*<div\\s*class=\"offer-card__feature-value\">\\s*([^<]+)\\s*</div>\\s*<div\\s*class=\"offer-card__feature-name\">Общая площадь</div>\\s*</div>");
 		    	        Matcher flatAreaMatcher = flatAreaPattern.matcher(response);
 		    	        if (flatAreaMatcher.find()) {
 		    	        	flat.put("flatArea", flatAreaMatcher.group(1));
 		    	        }
 				    	
-					    Pattern flatPricePattern = Pattern.compile("class\\s*=\\s*\"offer-header__price\"\\s*>\\s*([^<]+)\\s*<");
-		    	        Matcher flatPriceMatcher = flatPricePattern.matcher(response);
-		    	        if (flatPriceMatcher.find()) {
-		    	        	flat.put("flatPrice", Long.parseLong(flatPriceMatcher.group(1).replaceAll("\\s", "")));
-		    	        }
+//					    Pattern flatPricePattern = Pattern.compile("class\\s*=\\s*\"offer-header__price\"\\s*>\\s*([^<]+)\\s*<");
+//		    	        Matcher flatPriceMatcher = flatPricePattern.matcher(response);
+//		    	        if (flatPriceMatcher.find()) {
+//		    	        	flat.put("flatPrice", Long.parseLong(flatPriceMatcher.group(1).replaceAll("\\s", "")));
+//		    	        }
 				    	
-					    Pattern flatFlatPattern = Pattern.compile("Этаж\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+//					    Pattern flatFlatPattern = Pattern.compile("Этаж\\s*</span>\\s*</td>\\s*<td\\s+class\\s*=\\s*\"offer-data__item-right offer-data__item-td\"\\s*>\\s*([^<]+)\\s*<");
+					    Pattern flatFlatPattern = Pattern.compile("<div\\s*class=\"offer-card__feature offer-card__feature_name_floors-total-apartment\">\\s*<div\\s*class=\"offer-card__feature-value\">\\s*([^<]+)\\s*</div>\\s*<div\\s*class=\"offer-card__feature-name\">Этаж</div>\\s*</div>");
 		    	        Matcher flatFlatMatcher = flatFlatPattern.matcher(response);
 		    	        if (flatFlatMatcher.find()) {
 		    	        	flat.put("flatFlat", flatFlatMatcher.group(1));
