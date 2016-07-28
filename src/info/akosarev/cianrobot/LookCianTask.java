@@ -85,12 +85,12 @@ public class LookCianTask implements Runnable {
 
         taskIdSet = settings.getStringSet("taskId", taskIdSet);
         fraudIdSet = settings.getStringSet("fraudId", fraudIdSet);
-//        // delete last 30 items        
+//        // delete last 150 items        
 //        int i = 0;
 //        int size = taskIdSet.size();
 //        Set<String> taskIdSetDelete = new HashSet<String>();
 //        for (String taskId: taskIdSet){
-//        	if (i > size - 100 ) {
+//        	if (i > size - 150 ) {
 //        		taskIdSetDelete.add(taskId);
 //        	}
 //        	

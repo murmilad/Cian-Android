@@ -80,7 +80,7 @@ public class SearchYandex extends Search {
 					params.put("params[params][areaMin]", "50");
 					params.put("params[blocks][]", "i-map-state");
 					params.put("version", "2.0-1050");
-					params.put("crc", "y6403154e07ecf141c2c11a82d01ecb39");
+					params.put("crc", "yb98e767bcf9e5cee85e787b27a04829a");
 			    
 	
 	
