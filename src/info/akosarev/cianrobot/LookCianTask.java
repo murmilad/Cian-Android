@@ -2,6 +2,7 @@ package info.akosarev.cianrobot;
 
 import info.akosarev.cianrobot.R;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -30,9 +31,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
+import android.widget.Toast;
 
 //center 55.758563, 37.656984
 //
@@ -261,8 +265,27 @@ public class LookCianTask implements Runnable {
         				domofond = new SearchDomofond();
         			}
 	    			flats.addAll(domofond.lookForFlats(settings, editor, handler));
-	    		} catch(Exception ex) {
+	    		} catch(final IOException ex) {
 	    			Log.w("CianTask", ex.toString());
+	    			Handler h = new Handler(Looper.getMainLooper());
+
+    			    h.post(new Runnable() {
+    			        public void run() {
+    			             Toast.makeText(downloaderService, "Cian service IO error: " + ex.getMessage() + "!", Toast.LENGTH_LONG).show();
+    			        }
+    			    });
+	    			
+	        		ex.printStackTrace();
+	        		flats = taskIdSet;
+	        	} catch(final Exception ex) {
+	    			Log.w("CianTask", ex.toString());
+	    			Handler h = new Handler(Looper.getMainLooper());
+
+    			    h.post(new Runnable() {
+    			        public void run() {
+    			             Toast.makeText(downloaderService, "Cian service error: " + ex.getMessage() + "!", Toast.LENGTH_LONG).show();
+    			        }
+    			    });
 	        		ex.printStackTrace();
 	        		flats = taskIdSet;
 	        	}
