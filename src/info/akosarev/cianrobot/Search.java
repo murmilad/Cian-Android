@@ -255,6 +255,38 @@ public class Search {
 				metro.add(new Metro("Южная", new Coordinate((double) 37.609047, (double) 55.622436), true));
 				metro.add(new Metro("Ясенево", new Coordinate((double) 37.533400, (double) 55.606182), false));
 
+				metro.add(new Metro("Панфиловская (МЦК)", new Coordinate((double) 37.49886747395265, (double) 55.799109902313205), true));
+				metro.add(new Metro("Стрешнево (МЦК)", new Coordinate((double) 37.48697992359827, (double) 55.81367799415009), true));
+				metro.add(new Metro("Зорге (МЦК)", new Coordinate((double) 37.50450011288332, (double) 55.787797880396674), true));
+				metro.add(new Metro("Хорошёво (МЦК)", new Coordinate((double) 37.50709112679147, (double) 55.77732006003772), true));
+				metro.add(new Metro("Шелепиха (МЦК)", new Coordinate((double) 37.52550717388739, (double) 55.757469139587435), true));
+				metro.add(new Metro("Деловой центр (МЦК)", new Coordinate((double) 37.53208395039167, (double) 55.747098109303096), true));
+				metro.add(new Metro("Кутузовская (МЦК)", new Coordinate((double) 37.53420289551337, (double) 55.739460259746), true));
+				metro.add(new Metro("Лужники (МЦК)", new Coordinate((double) 37.56026323830161, (double) 55.72088591316372), true));
+				metro.add(new Metro("Площадь Гагарина (МЦК)", new Coordinate((double) 37.58603926693433, (double) 55.707079571637), true));
+				metro.add(new Metro("Крымская (МЦК)", new Coordinate((double) 37.60485228096458, (double) 55.690080656628815), true));
+				metro.add(new Metro("Верхние Котлы (МЦК)", new Coordinate((double) 37.61930938755465, (double) 55.69020792606945), true));
+				metro.add(new Metro("ЗИЛ (МЦК)", new Coordinate((double) 37.647708616604255, (double) 55.69784939409673), true));
+				metro.add(new Metro("Автозаводская (МЦК)", new Coordinate((double) 37.66364630257076, (double) 55.706582827291925), true));
+				metro.add(new Metro("Дубровка (МЦК)", new Coordinate((double) 37.677862010349564, (double) 55.71274927397838), true));
+				metro.add(new Metro("Угрешская (МЦК)", new Coordinate((double) 37.69753333126476, (double) 55.71852715909053), true));
+				metro.add(new Metro("Новохохловская (МЦК)", new Coordinate((double) 37.716968617786506, (double) 55.724219413961364), true));
+				metro.add(new Metro("Нижегородская (МЦК)", new Coordinate((double) 37.728335819591464, (double) 55.73240511108322), true));
+				metro.add(new Metro("Андроновка (МЦК)", new Coordinate((double) 37.7380668738974, (double) 55.74727662971303), true));
+				metro.add(new Metro("Шоссе Энтузиастов (МЦК)", new Coordinate((double) 37.74632271324524, (double) 55.75887573065447), true));
+				metro.add(new Metro("Соколиная гора (МЦК)", new Coordinate((double) 37.74504598175407, (double) 55.771411811744514), true));
+				metro.add(new Metro("Измайлово (МЦК)", new Coordinate((double) 37.74327035938591, (double) 55.78962954415331), true));
+				metro.add(new Metro("Локомотив (МЦК)", new Coordinate((double) 37.74603839908916, (double) 55.803944382989236), true));
+				metro.add(new Metro("Бульвар Рокоссовского (МЦК)", new Coordinate((double) 37.737015447962854, (double) 55.8172240198734), true));
+				metro.add(new Metro("Белокаменная (МЦК)", new Coordinate((double) 37.70294066463753, (double) 55.82928835171663), true));
+				metro.add(new Metro("Ростокино (МЦК)", new Coordinate((double) 37.667637429583465, (double) 55.83945027690304), true));
+				metro.add(new Metro("Ботанический сад (МЦК)", new Coordinate((double) 37.639747820246264, (double) 55.84549605114521), true));
+				metro.add(new Metro("Владыкино (МЦК)", new Coordinate((double) 37.59265359436271, (double) 55.847355170814936), true));
+				metro.add(new Metro("Окружная (МЦК)", new Coordinate((double) 37.57114764248109, (double) 55.84890939874526), true));
+				metro.add(new Metro("Лихоборы (МЦК)", new Coordinate((double) 37.55118127857412, (double) 55.8471016596661), true));
+				metro.add(new Metro("Коптево (МЦК)", new Coordinate((double) 37.52014812027176, (double) 55.839773264950566), true));
+				metro.add(new Metro("Балтийская (МЦК)", new Coordinate((double) 37.496415934907844, (double) 55.82591554849101), true));
+				
 				DecimalFormat dff;
 		        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
 		        otherSymbols.setDecimalSeparator('.');
